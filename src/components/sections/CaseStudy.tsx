@@ -1,12 +1,20 @@
 'use client';
+import { useEffect, useRef, useState } from 'react';
 import { CASE_STUDY, SECTION_TAGS } from '@/lib/data';
-import { ArrowUpRight } from '../ui/Icons';
+import { prefersReducedMotion, useReducedMotion } from '@/lib/hooks';
+import { ArrowUpRight, Pause, Play } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
 
 // Round 5 (Andre 2026-10-07): the Research slot becomes a featured case study of loomwest.com, "my company's own site",
 // between Always learning and Experience. Words and numbers from the live site and the vault (lib/data.ts names the
 // sources); the screenshots are the live home page in colour, like the Work screenshots.
+// Round 6 (Andre's pick 2026-10-07, about 10:45 PM, "Case study loomwest.com shot"; built 10/8): the desktop and phone
+// frames show the hero moving. Each still stays as the poster and sits under a silent 3.5 s loop recorded from the site
+// (scripts/capture-case-video.mjs, about 170 KB and 115 KB). Nothing loads in the first screen: a recording is fetched
+// only as the section comes within 600 px, plays while on screen, pauses off it, and fades in over its still so the
+// hand-over never jumps. With reduced motion only the stills show. The button in the browser bar pauses and plays both
+// (WCAG 2.2.2, like the Motion cards).
 const css = `
 .cs-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-areas:"head fig" "body fig";column-gap:clamp(32px,5vw,88px);align-items:start}
 .cs-head{grid-area:head}
@@ -32,8 +40,20 @@ const css = `
 .cs-bar i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
 .cs-bar span{margin-left:10px;font-family:var(--font-mono);font-size:11px;color:var(--mute)}
 .cs-browser img{display:block;width:100%;height:auto;aspect-ratio:1280/800;object-fit:cover}
+.cs-media{position:relative}
+.cs-media video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s var(--ease)}
+.cs-media video.on{opacity:1}
+.cs-toggle{position:absolute;top:3px;right:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;color:var(--ink-2);
+  transition:background-color .3s var(--ease)}
+.cs-toggle:hover{background:var(--soft)}
+.cs-toggle:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.cs-toggle svg{width:12px;height:12px}
 .cs-phone{position:absolute;right:-14px;bottom:-22px;width:27%;border-radius:20px;padding:5px;background:var(--ink);box-shadow:0 26px 44px -18px rgba(13,13,13,.6)}
 .cs-phone img{display:block;width:100%;height:auto;aspect-ratio:390/844;object-fit:cover;border-radius:15px}
+.cs-phone video{border-radius:15px}
+@media (prefers-reduced-motion: reduce){
+  .cs-media video,.cs-toggle{display:none}
+}
 .cs-label{margin-top:36px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 @media (max-width: 999px){
   .cs-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "fig" "body"}
@@ -46,14 +66,95 @@ const css = `
   .cs-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cs-shot{margin-right:10px}
   .cs-phone{right:-10px;bottom:-18px;width:30%;border-radius:14px;padding:4px}
-  .cs-phone img{border-radius:10px}
+  .cs-phone img,.cs-phone video{border-radius:10px}
   .cs-label{margin-top:30px}
 }
 `;
 
+// One frame's picture: the still (the poster, and all a reduced-motion visitor sees) with its silent loop over it.
+// The label sits on the wrapper; the still and the video inside it are decoration.
+function LoopShot({ still, video, alt, w, h, paused, reduced }: { still: string; video: string; alt: string; w: number; h: number; paused: boolean; reduced: boolean }) {
+  const box = useRef<HTMLDivElement>(null);
+  const vRef = useRef<HTMLVideoElement>(null);
+  const [near, setNear] = useState(false);
+  const [shown, setShown] = useState(false);
+  const onScreen = useRef(false);
+  const hold = useRef(paused);
+  hold.current = paused;
+
+  // play only while on screen, not paused by the viewer, and motion allowed (read live, before React state settles)
+  const sync = useRef(() => {});
+  sync.current = () => {
+    const v = vRef.current;
+    if (!v) return;
+    if (onScreen.current && !hold.current && !prefersReducedMotion()) {
+      if (!v.getAttribute('src')) v.setAttribute('src', video);
+      v.muted = true;
+      v.play().catch(() => {});
+    } else if (!v.paused) v.pause();
+  };
+
+  useEffect(() => {
+    const el = box.current;
+    if (!el || !('IntersectionObserver' in window)) return;
+    // fetch as the section nears the screen; nothing in the first load
+    const nearIO = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting || prefersReducedMotion()) return;
+        setNear(true);
+        const v = vRef.current;
+        if (v && !v.getAttribute('src')) {
+          v.preload = 'auto';
+          v.setAttribute('src', video);
+        }
+        nearIO.disconnect();
+      },
+      { rootMargin: '600px 0px' },
+    );
+    const viewIO = new IntersectionObserver(([e]) => {
+      onScreen.current = e.isIntersecting;
+      sync.current();
+    });
+    nearIO.observe(el);
+    viewIO.observe(el);
+    return () => {
+      nearIO.disconnect();
+      viewIO.disconnect();
+    };
+  }, [video]);
+
+  useEffect(() => {
+    sync.current();
+  }, [paused, reduced]);
+
+  return (
+    <div ref={box} className="cs-media" role="img" aria-label={alt}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={still} alt="" width={w} height={h} loading="lazy" decoding="async" />
+      <video
+        ref={vRef}
+        className={shown && !reduced ? 'on' : undefined}
+        muted
+        loop
+        playsInline
+        preload="none"
+        poster={near ? still : undefined}
+        aria-hidden="true"
+        tabIndex={-1}
+        disablePictureInPicture
+        width={w}
+        height={h}
+        onPlaying={() => setShown(true)}
+      />
+    </div>
+  );
+}
+
 export default function CaseStudy() {
   const t = SECTION_TAGS.caseStudy;
   const c = CASE_STUDY;
+  const reduced = useReducedMotion();
+  const [paused, setPaused] = useState(false);
   return (
     <section id="case-study" className="section" aria-labelledby="cs-title">
       <Style css={css} />
@@ -100,12 +201,15 @@ export default function CaseStudy() {
                 <i />
                 <span>{c.domain}</span>
               </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={c.shot} alt="loomwest.com's home page on a desktop: Be the business they call first, the prices, and the Start my website and Call or text buttons" width={760} height={475} loading="lazy" decoding="async" />
+              <LoopShot still={c.shot} video={c.video} alt="loomwest.com's home page on a desktop: Be the business they call first, the prices, and the Start my website and Call or text buttons" w={760} h={475} paused={paused} reduced={reduced} />
+              {reduced ? null : (
+                <button type="button" className="cs-toggle" aria-pressed={!paused} aria-label={`Silent recordings of loomwest.com: ${paused ? 'paused' : 'playing'}`} onClick={() => setPaused((p) => !p)}>
+                  {paused ? <Play /> : <Pause />}
+                </button>
+              )}
             </div>
             <div className="cs-phone">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={c.shotPhone} alt="The same home page on a phone" width={300} height={649} loading="lazy" decoding="async" />
+              <LoopShot still={c.shotPhone} video={c.videoPhone} alt="The same home page on a phone" w={300} h={649} paused={paused} reduced={reduced} />
             </div>
           </div>
           <figcaption className="cs-label">{c.caption}</figcaption>

@@ -23,6 +23,10 @@
 // "Motion & Reels": nothing from /motion/ in the first load, eight film cards, each a silent looping preview that loads
 // and plays only in view (muted, looped, its poster), a pause / play button, "Watch with sound" links to loomwest.com's
 // Content Studio & Ads page and the posted Report Card Reel; with reduced motion nothing plays until the button is pressed.
+// Round 6 (2026-10-08): the case study's desktop and phone frames show loomwest.com's hero moving: nothing from the
+// recordings in the first load, then (in view) both silent loops play muted and looped over their stills (the posters),
+// aria-hidden inside a labelled wrapper, wrap past the 3.5 s end, answer 200 as video/mp4 under 2 MB, pause and play from
+// the browser-bar button, pause off screen and resume; on a phone they play; with reduced motion only the stills show.
 import { chromium } from 'playwright';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { serve } from './serve.mjs';
@@ -64,6 +68,7 @@ async function open(browser, opts = {}) {
 {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
   const { ctx, page, errors, reqs } = await open(browser);
+  const caseAtStart = reqs.filter((u) => /\/work\/case-loomwest[^/]*\.mp4/.test(u)).length;
   const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-sound').getAttribute('aria-label') }; });
   check('hero video plays with sound when the browser allows it', !v0.paused && !v0.muted, JSON.stringify(v0));
   check('hero video is the webm/mp4 loop of about 9.5 s', v0.loop && Math.abs(v0.dur - 9.5) < 0.15, `${v0.src}, ${v0.dur?.toFixed(3)} s`);
@@ -237,6 +242,51 @@ async function open(browser, opts = {}) {
       cta: a ? [a.textContent.trim().slice(0, 18), a.href, a.target, a.rel] : null, title: sec.querySelector('h2')?.textContent };
   });
   check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 13 / 8, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join() === '59,7,13,8' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
+  // round 6: the hero moving in the case study's frames
+  check('the first screen fetched nothing from the case study recordings', caseAtStart === 0, `${caseAtStart} requests at load`);
+  const csv = () => page.evaluate(() => [...document.querySelectorAll('#case-study .cs-media')].map((m) => {
+    const v = m.querySelector('video');
+    const i = m.querySelector('img');
+    return { role: m.getAttribute('role'), label: (m.getAttribute('aria-label') || '').slice(0, 24), imgAlt: i.getAttribute('alt'), still: i.getAttribute('src'), src: v.getAttribute('src'),
+      poster: v.getAttribute('poster'), paused: v.paused, muted: v.muted, loop: v.loop, hidden: v.getAttribute('aria-hidden'), tab: v.tabIndex, controls: v.controls, on: v.classList.contains('on'),
+      t: +v.currentTime.toFixed(2), btn: document.querySelector('#case-study .cs-toggle')?.getAttribute('aria-pressed') };
+  }));
+  await page.evaluate(() => document.querySelector('#case-study .cs-fig').scrollIntoView({ block: 'center' }));
+  await sleep(2500);
+  const cv1 = await csv();
+  check('in view, both recordings play silently over their stills (muted, looped, the stills as posters, aria-hidden in a labelled wrapper, no controls)',
+    cv1.length === 2 && cv1[0].src === '/work/case-loomwest.mp4' && cv1[1].src === '/work/case-loomwest-phone.mp4' && cv1.every((c, k) => !c.paused && c.muted && c.loop && c.on && c.poster === c.still && c.hidden === 'true' && c.tab === -1 && !c.controls && c.role === 'img' && c.imgAlt === '' && c.label === ['loomwest.com\'s home page', 'The same home page on a '][k]),
+    JSON.stringify(cv1));
+  let csWrapped = false;
+  let csLast = cv1[0].t;
+  for (let i = 0; i < 10; i++) {
+    await sleep(500);
+    const t = (await csv())[0].t;
+    if (t + 1 < csLast) csWrapped = true;
+    csLast = t;
+  }
+  check('the recording loops past its 3.5 s end', csWrapped, `wrapped=${csWrapped}`);
+  const csFiles = await page.evaluate(async () => {
+    const out = [];
+    for (const u of ['/work/case-loomwest.mp4', '/work/case-loomwest-phone.mp4']) { const r = await fetch(u, { cache: 'no-store' }); out.push([u.split('/').pop(), r.status, r.headers.get('content-type'), (await r.arrayBuffer()).byteLength]); }
+    return out;
+  });
+  check('both recordings answer 200 as video/mp4, each under 2 MB', csFiles.every((f) => f[1] === 200 && f[2] === 'video/mp4' && f[3] < 2000000), csFiles.map((f) => `${f[0]} ${f[1]} ${Math.round(f[3] / 1024)}KB`).join(', '));
+  await page.screenshot({ path: `${SHOTS}/qa-case-study-video.png` });
+  await page.click('#case-study .cs-toggle');
+  await sleep(500);
+  const cv2 = await csv();
+  await page.click('#case-study .cs-toggle');
+  await sleep(800);
+  const cv3 = await csv();
+  check('the browser-bar button pauses both recordings and plays them again', cv2.every((c) => c.paused && c.btn === 'false') && cv3.every((c) => !c.paused && c.btn === 'true'), JSON.stringify({ paused: cv2.map((c) => c.paused), again: cv3.map((c) => c.paused), btn: [cv2[0].btn, cv3[0].btn] }));
+  await scrollToId(page, 'contact');
+  await sleep(900);
+  const cv4 = await csv();
+  await page.evaluate(() => document.querySelector('#case-study .cs-fig').scrollIntoView({ block: 'center' }));
+  await sleep(1200);
+  const cv5 = await csv();
+  check('both recordings pause off screen and resume in view', cv4.every((c) => c.paused) && cv5.every((c) => !c.paused), JSON.stringify({ off: cv4.map((c) => c.paused), back: cv5.map((c) => c.paused) }));
   const xp = await page.evaluate(() => ({
     stops: [...document.querySelectorAll('#experience .xp-stop .xp-card')].map((c) => c.querySelector('.xp-year').childNodes[0].textContent.trim() + ' ' + c.querySelector('.xp-title').textContent),
     next: document.querySelector('#experience .xp-next h3')?.textContent,
@@ -621,6 +671,14 @@ async function open(browser, opts = {}) {
       await sleep(700);
       const tw2 = await page.evaluate(() => [...document.querySelectorAll('#work [role="tab"]')].map((b) => b.getAttribute('aria-selected')).join());
       check('and a tap on "Live client sites" switches back', tw2 === 'true,false,false', tw2);
+      await page.evaluate(() => document.querySelector('#case-study .cs-fig').scrollIntoView({ block: 'center' }));
+      await sleep(2500);
+      const pc = await page.evaluate(() => ({
+        v: [...document.querySelectorAll('#case-study .cs-media video')].map((v) => [v.getAttribute('src'), !v.paused, v.muted, v.classList.contains('on')]),
+        overflow: [document.documentElement.scrollWidth, innerWidth],
+      }));
+      check('on a phone the case study recordings play silently in view, with no overflow', pc.v.length === 2 && pc.v.every((x) => x[0] && x[1] && x[2] && x[3]) && pc.overflow[0] === pc.overflow[1], JSON.stringify(pc));
+      await page.screenshot({ path: `${SHOTS}/qa-phone-case-study-video.png` });
       await scrollToId(page, 'contact', 300);
       await sleep(1300);
       await page.tap('.ct-badge');
@@ -659,6 +717,14 @@ async function open(browser, opts = {}) {
   await sleep(800);
   const rm2 = await page.evaluate(() => { const v = document.querySelector('#wk-tabpanel-motion video'); return { paused: v.paused, muted: v.muted }; });
   check('reduced motion: the film previews show their posters and wait for the button; pressed, they play silently', rm1.paused && rm1.poster && rm1.pressed === 'false' && !rm2.paused && rm2.muted, JSON.stringify({ rm1, rm2 }));
+  await page.evaluate(() => document.querySelector('#case-study .cs-fig').scrollIntoView({ block: 'center' }));
+  await sleep(1800);
+  const rc = await page.evaluate(() => ({
+    v: [...document.querySelectorAll('#case-study .cs-media video')].map((v) => [v.getAttribute('src'), v.paused, getComputedStyle(v).display]),
+    imgs: [...document.querySelectorAll('#case-study .cs-media img')].map((i) => i.complete && i.naturalWidth > 0),
+    btn: !!document.querySelector('#case-study .cs-toggle'),
+  }));
+  check('reduced motion: the case study shows only its stills (no recording fetched or played, no button)', rc.v.length === 2 && rc.v.every((x) => !x[0] && x[1] && x[2] === 'none') && rc.imgs.every(Boolean) && !rc.btn, JSON.stringify(rc));
   const spin = await page.evaluate(() => { const c = getComputedStyle(document.querySelector('.ct-badge svg')); return { dur: c.animationDuration, count: c.animationIterationCount }; });
   check('reduced motion: the "Say hello" badge does not spin', parseFloat(spin.dur) < 0.01 && spin.count === '1', JSON.stringify(spin));
   check('no console errors with reduced motion', errors.length === 0, errors.join(' | '));

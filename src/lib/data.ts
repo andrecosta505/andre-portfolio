@@ -389,7 +389,11 @@ export const CASE_STUDY = {
   ],
   shot: '/work/case-loomwest.webp',
   shotPhone: '/work/case-loomwest-phone.webp',
-  caption: 'Live site · captured 7 Oct 2026',
+  // round 6: the hero moving, silent 3.5 s loops recorded from the site's files (scripts/capture-case-video.mjs); the
+  // stills above are their posters
+  video: '/work/case-loomwest.mp4',
+  videoPhone: '/work/case-loomwest-phone.mp4',
+  caption: 'Live site · recorded 8 Oct 2026',
   url: 'https://loomwest.com/',
   domain: 'loomwest.com',
   cta: 'Visit loomwest.com',
