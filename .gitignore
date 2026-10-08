@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+qa/
+
+# Internal: runbook and the full résumé stay on this PC (Andre 2026-10-07, public repo)
+RUNBOOK.md
+resume/resume-full.html
+resume/Andre-Costa-Resume-full.pdf

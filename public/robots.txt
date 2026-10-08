@@ -1,0 +1,5 @@
+# andre.loomwest.com, public since 2026-10-07: every crawler may read every page.
+User-agent: *
+Allow: /
+
+Sitemap: https://andre.loomwest.com/sitemap.xml

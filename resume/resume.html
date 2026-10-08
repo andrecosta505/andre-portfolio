@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Andre Costa, Résumé</title>
+<!-- Source of public/andre-costa-resume.pdf. Text is the web design résumé (loomwest/planning/portfolio-andre/resume-web.md,
+     2026-10-07), word for word. Andre's full résumé is resume-full.html beside this file. Rebuild: npm run resume
+     (scripts/build-resume-pdf.mjs prints this page to PDF with Chrome). -->
+<style>
+  @font-face { font-family: 'Inter Tight'; src: url('../src/fonts/InterTight-Variable.woff2') format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: 'Instrument Serif'; src: url('../src/fonts/InstrumentSerif-Italic.woff2') format('woff2'); font-style: italic; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('../src/fonts/JetBrainsMono-Variable.woff2') format('woff2'); font-weight: 100 800; }
+  @page { size: Letter; margin: 0.38in 0.55in 0.34in; }
+  :root { --ink: #0d0d0d; --ink2: #3a3a3a; --mute: #6b6963; --line: #d9d6d0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Inter Tight', system-ui, sans-serif; color: var(--ink); font-size: 9.3pt; line-height: 1.36; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-bottom: 9px; border-bottom: 1.5px solid var(--ink); }
+  h1 { margin: 0; font-size: 27pt; font-weight: 700; letter-spacing: -0.03em; word-spacing: 0.06em; line-height: 1; }
+  .role { margin-top: 5px; font-size: 11pt; font-weight: 500; color: var(--ink2); }
+  .role em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; font-size: 13pt; color: var(--mute); }
+  .contact { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 7.6pt; line-height: 1.6; color: var(--ink2); }
+  .contact a { color: inherit; text-decoration: none; }
+  h2 { margin: 9px 0 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.6pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute);
+       display: flex; align-items: center; gap: 10px; }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  p { margin: 0; }
+  .summary { font-size: 9.6pt; color: var(--ink2); }
+  .job { margin-top: 6px; }
+  .job-h { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+  .job-t { font-weight: 700; }
+  .job-t span { font-weight: 500; color: var(--ink2); }
+  .when { font-family: 'JetBrains Mono', monospace; font-size: 7.6pt; color: var(--mute); white-space: nowrap; }
+  ul { margin: 3px 0 0; padding-left: 2px; list-style: none; }
+  li { margin: 1px 0; padding-left: 10px; color: var(--ink2);
+       background: radial-gradient(circle, var(--mute) 1.6px, transparent 2px) no-repeat 0 0.5em / 4px 4px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 26px; }
+  .work li b { color: var(--ink); font-weight: 600; }
+  .work li.examples { grid-column: 1 / -1; }
+  .work li a { color: inherit; text-decoration: none; }
+  .muted { color: var(--mute); }
+  .skills { color: var(--ink2); }
+  .research-t { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 11pt; color: var(--ink); }
+  .small { font-size: 9pt; }
+  .ms { columns: 3; column-gap: 22px; }
+  .ms li { margin: 1px 0; break-inside: avoid; }
+  .ms .d { font-family: 'JetBrains Mono', monospace; font-size: 7.4pt; color: var(--mute); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Andre Costa</h1>
+    <p class="role">Founder and <em>designer</em>, Loomwest · Gilroy, California</p>
+  </div>
+  <div class="contact">
+    <a href="tel:+16695006385">(669) 500-6385</a> · <a href="mailto:andre@loomwest.com">andre@loomwest.com</a><br>
+    <a href="https://loomwest.com">loomwest.com</a> · <a href="https://instagram.com/loomwest.design">instagram.com/loomwest.design</a><br>
+    <a href="https://www.linkedin.com/in/andre-costa-98535b199">linkedin.com/in/andre-costa-98535b199</a>
+    <!-- GitHub, prepared and off (Andre 2026-10-07: add it once the profile is shaped up). To switch on, replace the
+         LinkedIn line above with this one, then npm run resume:
+    <a href="https://www.linkedin.com/in/andre-costa-98535b199">linkedin.com/in/andre-costa-98535b199</a> · <a href="https://github.com/andrecosta505">github.com/andrecosta505</a>
+    -->
+  </div>
+</header>
+
+<h2>Summary</h2>
+<p class="summary">I build websites for local businesses that are good at what they do but are losing customers to a search result. I design, write and build every Loomwest site by hand and stay the point of contact afterward. Before a site goes live, I measure it on a phone and check it against a nineteen-point launch checklist.</p>
+
+<h2>Experience</h2>
+<div class="job">
+  <div class="job-h"><p class="job-t">Founder and designer, <span>Loomwest (Gilroy, California)</span></p><p class="when">August 2026 to present</p></div>
+  <ul>
+    <li>Design, copy, build and launch of websites for local businesses at fixed prices, live in three to seven days.</li>
+    <li>Eight sites live (seven for clients plus loomwest.com), two more in client review.</li>
+    <li>Every launch ships with a private preview and a review form, a privacy page, map links, and visit counting with no cookies.</li>
+    <li>Care plans for changes after launch; local ads built and managed for clients; a free Website Report Card for any business.</li>
+  </ul>
+</div>
+
+<h2>Loomwest milestones, 2026</h2>
+<ul class="ms small">
+  <li><span class="d">Aug 18</span> Loomwest is named, Gilroy</li>
+  <li><span class="d">Aug 22</span> loomwest.com goes live</li>
+  <li><span class="d">Aug 23</span> The free Website Report Card</li>
+  <li><span class="d">Aug 27</span> Nine Star Drywall, the first launch</li>
+  <li><span class="d">Aug 29</span> The Work page and design range</li>
+  <li><span class="d">Sep 4</span> South County Window Cleaning</li>
+  <li><span class="d">Sep 10</span> Faria Accountancy Corporation</li>
+  <li><span class="d">Sep 22</span> Soul Beauty Spa</li>
+  <li><span class="d">Sep 25</span> Auburn Sewing Studio</li>
+  <li><span class="d">Oct 2</span> Pastelaria Adega</li>
+  <li><span class="d">Oct 5</span> Petiscos by Adega</li>
+  <li><span class="d">Oct 5</span> The Content Studio opens</li>
+</ul>
+
+<h2>Selected work (client sites, example sites, motion and Reels)</h2>
+<ul class="work two small">
+  <li><b>Soul Beauty Spa</b>, San Rafael: soulbeautyspa.com (searchable 67-treatment menu, booking from every section)</li>
+  <li><b>Pastelaria Adega</b>, San Jose: pasteladega.com (bakery, ordering, markets on a map)</li>
+  <li><b>Petiscos by Adega</b>, San Jose: petiscosadega.com (restaurant, reservations and delivery)</li>
+  <li><b>Auburn Sewing Studio</b>, Auburn: sewauburn.com (classes with online payment)</li>
+  <li><b>South County Window Cleaning</b>, Gilroy: southcountywindowcleaning.com (three pages, before-and-after solar slider, the owner's own photography, holiday lighting gallery)</li>
+  <li><b>Nine Star Drywall</b>, Hollister: ninestardrywall.com (the company's first website, interactive texture room to compare finishes, real reviews)</li>
+  <li><b>Faria Accountancy Corporation</b>, San Jose: fariacpas.com (one refined, type-led page with the owner's services, logo, photo and credentials)</li>
+  <li class="muted">In review: Trilogy Adult Services and Lujan &amp; Lee Commercial Services, Concord.</li>
+  <!-- Example sites (Andre 2026-10-07): the résumé's full list, one line here for the one page; each name links its example site -->
+  <li class="examples"><b>Example sites</b> (fictional businesses, built to show styles): <a href="https://palegreen-magpie-614090.hostingersite.com/">The Cinematic</a>, <a href="https://blue-hawk-623227.hostingersite.com/">The Balanced</a>, <a href="https://lightslategray-rook-396983.hostingersite.com/">The Clean &amp; Simple</a>, <a href="https://lightslategray-rook-396983.hostingersite.com/editorial/">The Editorial</a>, <a href="https://lightslategrey-pony-429873.hostingersite.com/">The Brutalist</a>, <a href="https://red-goose-215944.hostingersite.com/">The Neo-Retro</a>, <a href="https://powderblue-narwhal-823679.hostingersite.com/">The Desktop</a>, <a href="https://lightgoldenrodyellow-badger-713438.hostingersite.com/">The Atelier</a>, <a href="https://mediumslateblue-oyster-794227.hostingersite.com/">The Launch</a>, <a href="https://purple-elephant-184188.hostingersite.com/">The Sketchbook</a>, <a href="https://darkslategray-wolverine-375239.hostingersite.com/">The Barbershop</a>, <a href="https://gray-rail-206436.hostingersite.com/">The Detail Studio</a> and <a href="https://moccasin-locust-210497.hostingersite.com/">The Light Table</a>; all on <a href="https://loomwest.com/work.html">loomwest.com/work.html</a>.</li>
+  <li class="examples"><b>Motion and Reels</b> (eight motion films designed, animated and scored in house, on <a href="https://loomwest.com/content.html">loomwest.com/content.html</a>): Website Report Card (also an Instagram Reel on @loomwest.design, October 6, 2026), One Tap, On the Map, Five Checks, Before and After, Blueprint, Detailers and Referral.</li>
+</ul>
+
+<h2>Case study: loomwest.com, my company's own site</h2>
+<div class="job-h"><p class="job-t">loomwest.com, <span>designed, written and built by hand</span></p><p class="when">Live since August 22, 2026</p></div>
+<p class="small" style="margin-top:3px;color:var(--ink2)">Every price published, the launched work and the design range, and a visit turned into a request: the free Website Report Card (five checks, back within one business day, with an instant PageSpeed Insights first look while the visitor waits), Work page tours of each launched site, the Content Studio's eight motion ads, and booking a build with the total and the go-live date shown before anything is charged. 59 Report Cards published.</p>
+
+<h2>Skills</h2>
+<p class="skills small"><b>Web:</b> Web design · Front-end development (HTML, CSS, JavaScript) · Copywriting · Client relationships. <b>Ads &amp; marketing:</b> Search engine optimisation · Local marketing · Google Business Profile · Meta ads · Instagram content (posts, Reels and Stories). <b>Motion &amp; video:</b> Motion graphics built in code · Short-form video editing · AI-assisted video (Higgsfield). <b>Platforms:</b> Shopify · Stripe · Hostinger.</p>
+
+<h2>Always learning (new web skills, already in use on live sites)</h2>
+<p class="skills small">Accessibility testing (WCAG, checked with axe) · Page speed on phones (PageSpeed Insights) · Structured data for search (schema.org) · Cookie-free visit counting (GoatCounter) · Interactive maps (Leaflet with OpenStreetMap) · Online payments (Stripe Payment Links)</p>
+
+</body>
+</html>
