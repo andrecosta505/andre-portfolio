@@ -71,7 +71,7 @@ async function open(browser, opts = {}) {
   const caseAtStart = reqs.filter((u) => /\/work\/case-loomwest[^/]*\.mp4/.test(u)).length;
   const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-sound').getAttribute('aria-label') }; });
   check('hero video plays with sound when the browser allows it', !v0.paused && !v0.muted, JSON.stringify(v0));
-  check('hero video is the webm/mp4 loop of about 11.5 s (own voice since 2026-10-10)', v0.loop && Math.abs(v0.dur - 11.5) < 0.15, `${v0.src}, ${v0.dur?.toFixed(3)} s`);
+  check('hero video is the webm/mp4 loop of about 9.5 s', v0.loop && Math.abs(v0.dur - 9.5) < 0.15, `${v0.src}, ${v0.dur?.toFixed(3)} s`);
   // loops: watch currentTime wrap past the end
   const t1 = await page.evaluate(() => document.querySelector('.hero video').currentTime);
   let wrapped = false;

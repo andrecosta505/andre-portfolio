@@ -43,10 +43,9 @@ export const PROFILE = {
   quote: "If it isn't fast on a phone, it isn't finished.",
 };
 
-// the intro video's spoken words (its text equivalent): since 2026-10-10 the hero speaks in Andre's own recorded voice,
-// and this is what he says in it (word for word, as public/hero/intro.vtt shows it)
+// the intro video's spoken words (its text equivalent), Andre's approved script for take 2
 export const INTRO_TRANSCRIPT =
-  "Hi, I'm Andre, the founder of Loomwest, a web design studio in Gilroy. I build fast, hand-built websites for local businesses, online in a few days.";
+  "Hi, I'm Andre. I'm the founder of Loomwest, a web design studio in Gilroy. I build fast, hand-built websites for local businesses, online in days.";
 
 export type NavItem = { id: string; label: string };
 export const NAV: NavItem[] = [
