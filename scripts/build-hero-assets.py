@@ -33,7 +33,12 @@ import wave
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_SRC = r"C:\Users\andre\loomwest\planning\portfolio-andre\video\intro-v2.mp4"
+# Since 2026-10-10 the hero speaks in Andre's OWN voice: intro-v3-own-voice.mp4 is wan2_7 (Higgsfield, 1080p, 12 s)
+# lip-synced to his phone recording (voice/andre-intro-take1.aac, lightly cleaned: trimmed, 70 Hz high-pass, gentle
+# afftdn, +2.17 dB to the old intro's -19.7 LUFS), with intro-v2's first frame as both start and end image so the
+# framing matches take 2 and the clip returns to its first pose for the loop. intro-v2.mp4 (the AI voice) stays as
+# the previous source.
+DEFAULT_SRC = r"C:\Users\andre\loomwest\planning\portfolio-andre\video\intro-v3-own-voice.mp4"
 DEFAULT_PHOTO = r"C:\Users\andre\loomwest\code-review\site-unused-2026-09-30\assets\candidates\andre-headshot-A.jpg"
 OUT_W, OUT_H = 768, 960
 # feather the crop's left, right and bottom edges to white (64 px and 20 px), so the floor shadow that runs off the
@@ -41,13 +46,14 @@ OUT_W, OUT_H = 768, 960
 FEATHER = "{c}(X,Y)+(255-{c}(X,Y))*max(clip(1-min(X,W-1-X)/64,0,1),clip(1-(H-1-Y)/20,0,1))"
 PAPER = np.array([0xF4, 0xF2, 0xEE], dtype=np.float32)
 
-# The spoken script (Andre approved take 2 on 2026-10-07) with cue times in SOURCE seconds, read off the audio
-# envelope (speech 0.62 to 9.85 s). Shifted by the loop's start when the captions are written.
+# Andre's own words (2026-10-10 recording; faster-whisper base.en, small.en and medium.en all hear "the founder" without a
+# second "I'm" and "online in a few days"), cue times in SOURCE seconds read off the cleaned audio (speech 0.72 to
+# 11.45 s; word times from medium.en, the first onset from silencedetect). Shifted by the loop's start when written.
 CUES = [
-    (0.62, 1.78, "Hi, I'm Andre."),
-    (1.92, 4.92, "I'm the founder of Loomwest, a web design studio in Gilroy."),
-    (5.32, 7.50, "I build fast, hand-built websites for local businesses,"),
-    (7.52, 9.85, "online in days."),
+    (0.72, 1.86, "Hi, I'm Andre,"),
+    (2.36, 5.66, "the founder of Loomwest, a web design studio in Gilroy."),
+    (6.20, 9.64, "I build fast, hand-built websites for local businesses,"),
+    (9.66, 11.45, "online in a few days."),
 ]
 
 
@@ -175,7 +181,7 @@ def main():
     ap.add_argument("--photo", default=DEFAULT_PHOTO, help="photo for portrait-bust.webp ('' = use the clearest frame)")
     ap.add_argument("--crop", help="W:H:X:Y in source pixels, skips detection")
     ap.add_argument("--xfade", type=float, default=0.5)
-    ap.add_argument("--length", type=float, default=10.0)
+    ap.add_argument("--length", type=float, default=12.0)
     args = ap.parse_args()
 
     src, xf, length = args.src, args.xfade, args.length
