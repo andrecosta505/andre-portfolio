@@ -34,8 +34,11 @@ import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 2026-10-10: Andre tried his own voice (intro-v3-own-voice.mp4, commit 009c37e) and went back to take 2: he prefers the
-# AI voice with the hand gestures. A different AI voice for take 2 is being chosen next.
-DEFAULT_SRC = r"C:\Users\andre\loomwest\planning\portfolio-andre\video\intro-v2.mp4"
+# AI voice with the hand gestures. He then picked a different AI voice, Higgsfield's "Mark" preset: intro-v4-mark.mp4 is
+# take 2 run through Higgsfield voice_change (speech-to-speech), so the picture is take 2's frame for frame (gestures and
+# lip-sync untouched) and the pauses land within 25 ms of take 2's, which is why the CUES below still fit. Its audio is
+# raised +4.2 dB (plain gain, peak -8.6 dBFS) to take 2's -19.7 LUFS; the raw download is intro-v4-mark-raw.mp4.
+DEFAULT_SRC = r"C:\Users\andre\loomwest\planning\portfolio-andre\video\intro-v4-mark.mp4"
 DEFAULT_PHOTO = r"C:\Users\andre\loomwest\code-review\site-unused-2026-09-30\assets\candidates\andre-headshot-A.jpg"
 OUT_W, OUT_H = 768, 960
 # feather the crop's left, right and bottom edges to white (64 px and 20 px), so the floor shadow that runs off the
