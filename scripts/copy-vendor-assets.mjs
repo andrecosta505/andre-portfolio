@@ -35,7 +35,7 @@ for (const [file, key] of Object.entries(pick)) {
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img"><title>${icon.title}</title><path fill="#${icon.hex}" d="${icon.path}"/></svg>\n`);
 }
 copyFileSync(nm('devicon/LICENSE'), root('public/logos/LICENSE-devicon.txt'));
-copyFileSync(nm('simple-icons/LICENSE.md'), root('public/logos/LICENSE-simple-icons.md'));
-copyFileSync(nm('simple-icons/DISCLAIMER.md'), root('public/logos/DISCLAIMER-simple-icons.md'));
+copyFileSync(nm('simple-icons/LICENSE.md'), root('public/logos/LICENSE-simple-icons.txt'));
+copyFileSync(nm('simple-icons/DISCLAIMER.md'), root('public/logos/DISCLAIMER-simple-icons.txt'));
 writeFileSync(root('src/lib/brand-colours.json'), JSON.stringify(hexes, null, 2) + '\n');
 console.log('fonts and logos copied', hexes);

@@ -386,6 +386,9 @@ export const CASE_STUDY = {
     { value: '7', label: 'Launched client sites' },
     { value: '13', label: 'Example sites' },
     { value: '8', label: 'Motion ads' },
+    // across loomwest.com and the seven client sites (GoatCounter, loomwest/care/stats); refreshed on the 1st of each month
+    { value: '1,251', label: 'Site visits, Oct 6 to 10' },
+    { value: '194', label: 'Button taps: call, book, order' },
   ],
   shot: '/work/case-loomwest.webp',
   shotPhone: '/work/case-loomwest-phone.webp',

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 // Real brand logos keep their official colours (the only colour on the site). Sources and licences:
 // public/logos/LICENSE-devicon.txt (MIT; html5, css3, javascript "original" SVGs) and
-// public/logos/LICENSE-simple-icons.md (CC0; the single-path icons, filled with each brand's hex).
+// public/logos/LICENSE-simple-icons.txt (CC0; the single-path icons, filled with each brand's hex).
 export const BRAND: Record<string, { src: string; color: string; title: string }> = {
   html: { src: '/logos/html5.svg', color: '#E34F26', title: 'HTML5' },
   css: { src: '/logos/css3.svg', color: '#1572B6', title: 'CSS3' },
