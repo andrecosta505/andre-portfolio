@@ -28,7 +28,7 @@
 // aria-hidden inside a labelled wrapper, wrap past the 3.5 s end, answer 200 as video/mp4 under 2 MB, pause and play from
 // the browser-bar button, pause off screen and resume; on a phone they play; with reduced motion only the stills show.
 import { chromium } from 'playwright';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { serve } from './serve.mjs';
 
 const SHOTS = process.argv[2] || 'C:/Users/andre/loomwest/review/shots/andre-portfolio';
@@ -155,8 +155,14 @@ async function open(browser, opts = {}) {
   await scrollToId(page, 'achievements', span);
   await sleep(2000);
   const nums = await page.evaluate(() => Array.from(document.querySelectorAll('.ach-num span[aria-hidden]')).map((s) => s.textContent));
-  const want = ['8', '1,251', '194', '2', '3–7', '13', '59', '67', '8', '19'];
-  check('every achievement number counted up to its résumé value', JSON.stringify(nums) === JSON.stringify(want), nums.join(' | '));
+  // the expected numbers come from data.ts itself, so the weekly numbers update (tools/portfolio_numbers.py) never breaks this check
+  const achSrc = readFileSync(new URL('../src/lib/data.ts', import.meta.url), 'utf8');
+  const achBlock = achSrc.slice(achSrc.indexOf('export const ACHIEVEMENTS'), achSrc.indexOf('];', achSrc.indexOf('export const ACHIEVEMENTS')));
+  const want = [...achBlock.matchAll(/\{ value: (\d+)(?:, prefix: '([^']*)')?,/g)].map((m) => (m[2] || '') + Number(m[1]).toLocaleString('en-US'));
+  check('every achievement number counted up to its résumé value', want.length >= 8 && JSON.stringify(nums) === JSON.stringify(want), nums.join(' | '));
+  const pulled = await page.evaluate(() => document.querySelector('#achievements .ach-pulled')?.textContent || '');
+  const pulledWant = (achSrc.match(/export const NUMBERS_PULLED = '([^']*)'/) || [])[1];
+  check('the numbers section says when its numbers were pulled', !!pulledWant && /^Numbers pulled /.test(pulled) && pulled === pulledWant, pulled);
   await scrollToId(page, 'achievements', -200);
   await sleep(1000);
   const backTf = await page.evaluate(() => document.querySelector('.ach-track').style.transform);

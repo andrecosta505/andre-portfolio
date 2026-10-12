@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { ACHIEVEMENTS, SECTION_TAGS } from '@/lib/data';
+import { ACHIEVEMENTS, NUMBERS_PULLED, SECTION_TAGS } from '@/lib/data';
 import { useReducedMotion } from '@/lib/hooks';
 import { ArrowRight } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
@@ -12,6 +12,7 @@ const css = `
 .ach-pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding-top:64px}
 .ach-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 40px;margin-bottom:clamp(24px,5vh,48px)}
 .ach-head .h2{margin-top:18px;font-size:clamp(40px,5.6vw,84px)}
+.ach-pulled{margin-top:12px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}
 .ach-prog{width:min(260px,40vw);height:2px;background:var(--line);border-radius:2px;overflow:hidden}
 .ach-prog span{display:block;height:100%;background:var(--ink);transform-origin:0 50%;transform:scaleX(0)}
 .ach-track{display:flex;gap:clamp(14px,1.6vw,24px);list-style:none;margin:0;padding:24px var(--gutter) 40px;will-change:transform}
@@ -154,6 +155,7 @@ export default function Achievements() {
           <div>
             <SectionTag n={t.n} label={t.label} />
             <Heading id="ach-title" lines={['Numbers, so']} accent="far." />
+            <p className="ach-pulled">{NUMBERS_PULLED}</p>
           </div>
           <div className="ach-prog" aria-hidden="true">
             <span ref={progRef} />

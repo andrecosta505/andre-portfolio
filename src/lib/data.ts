@@ -492,12 +492,20 @@ export type Achievement = {
   icon: string; // a CONCEPT line icon (no platform logos apply)
 };
 
+// The weekly numbers (Andre 2026-10-12): every Sunday tools/portfolio_numbers.py (in C:\Users\andre\Documents\cristiano) rewrites the
+// lines between the "weekly numbers" markers from loomwest/finance/metrics/site-metrics.json, builds, runs scripts/qa.mjs and ships
+// only when every check passes. Edit that script, not these lines. Numbers never go down: a missing or lower value keeps the last
+// shipped one (loomwest/finance/metrics/portfolio-numbers.json).
+// weekly numbers: pulled line begin
+export const NUMBERS_PULLED = 'Numbers pulled Sun, Oct 11, 2026, 12:58 PM PT. Updated every Sunday.';
+// weekly numbers: pulled line end
+
 export const ACHIEVEMENTS: Achievement[] = [
   { value: 8, label: 'Sites live', caption: 'Seven for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
-  // across loomwest.com and the seven client sites (GoatCounter, loomwest/care/stats); refreshed on the 1st of each month.
-  // Moved here from the case study at Andre's ask (2026-10-12): they are numbers for every site built, not loomwest.com's.
+  // weekly numbers: cards begin
   { value: 1251, label: 'Site visits', caption: 'Across loomwest.com and the seven client sites, counted without cookies.', detail: 'Oct 6 to 10, 2026', icon: 'visits' },
   { value: 194, label: 'Button taps', caption: 'Taps on call, book and order buttons across the same sites.', detail: 'Oct 6 to 10, 2026', icon: 'tap' },
+  // weekly numbers: cards end
   { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites at fixed prices, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
   { value: 13, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },

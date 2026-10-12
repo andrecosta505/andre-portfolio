@@ -147,6 +147,31 @@ export const CONCEPT: Record<string, ReactNode> = {
       <path d="M15 7v5M7.5 10.5l3.5 3.5M5 18h5" />
     </>
   ),
+  // the weekly social and ads numbers (2026-10-12): reach as a broadcast, views as an eye, shares as a paper plane
+  reach: (
+    <>
+      <circle cx="24" cy="24" r="3" />
+      <path d="M16.5 16.5a10.6 10.6 0 0 0 0 15M31.5 16.5a10.6 10.6 0 0 1 0 15M11 11a18.4 18.4 0 0 0 0 26M37 11a18.4 18.4 0 0 1 0 26" />
+    </>
+  ),
+  views: (
+    <>
+      <path d="M5 24s7-11 19-11 19 11 19 11-7 11-19 11S5 24 5 24Z" />
+      <circle cx="24" cy="24" r="5.5" />
+    </>
+  ),
+  share: (
+    <>
+      <path d="M41 8 6 22l14 5 5 14Z" />
+      <path d="m20 27 21-19" />
+    </>
+  ),
+  follow: (
+    <>
+      <circle cx="20" cy="17" r="7" />
+      <path d="M7 40c1.5-7 6.5-11 13-11s11.5 4 13 11M36 15v10M31 20h10" />
+    </>
+  ),
 };
 
 export const isBrand = (k: string) => k in BRAND;
