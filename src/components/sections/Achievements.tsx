@@ -113,7 +113,9 @@ export default function Achievements() {
       cards.forEach((c, i) => {
         const b = c.getBoundingClientRect();
         const onScreen = b.right > 0 && b.left < window.innerWidth && b.top < vh && b.bottom > 0;
-        if (onScreen && b.left < window.innerWidth * 0.9) countUp(i);
+        // a card counts once it is on screen or already passed to the left, so a jump through the section (a nav link,
+        // a fast flick) never leaves a number at 0 (2026-10-12, ten cards made the gaps possible)
+        if (b.top < vh && b.bottom > 0 && b.left < window.innerWidth * 0.9) countUp(i);
         const d = Math.abs(b.left + b.width / 2 - cx);
         if (onScreen && d < bestD) {
           bestD = d;

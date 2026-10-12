@@ -209,24 +209,25 @@ export type Project = {
   style?: string;
 };
 
+// Order (Andre 2026-10-12): Petiscos by Adega first, "probably our best piece of work in terms of live client sites".
 export const PROJECTS: Project[] = [
   {
-    id: 'soul-beauty', index: '01', title: 'Soul Beauty Spa', kicker: 'San Rafael',
+    id: 'petiscos', index: '01', title: 'Petiscos by Adega', kicker: 'San Jose',
+    description: 'Restaurant, reservations and delivery.',
+    features: ['Restaurant', 'Reservations and delivery', ...EVERY_LAUNCH],
+    tech: SCOPE_CHIPS, url: 'https://petiscosadega.com', domain: 'petiscosadega.com', shot: '/work/petiscosadega.webp',
+  },
+  {
+    id: 'soul-beauty', index: '02', title: 'Soul Beauty Spa', kicker: 'San Rafael',
     description: 'Searchable 67-treatment menu, booking from every section.',
     features: ['Searchable 67-treatment menu', 'Booking from every section', ...EVERY_LAUNCH],
     tech: SCOPE_CHIPS, url: 'https://soulbeautyspa.com', domain: 'soulbeautyspa.com', shot: '/work/soulbeautyspa.webp',
   },
   {
-    id: 'pastelaria', index: '02', title: 'Pastelaria Adega', kicker: 'San Jose',
+    id: 'pastelaria', index: '03', title: 'Pastelaria Adega', kicker: 'San Jose',
     description: 'Bakery, ordering, markets on a map.',
     features: ['Bakery', 'Ordering', 'Markets on a map', ...EVERY_LAUNCH],
     tech: SCOPE_CHIPS, url: 'https://pasteladega.com', domain: 'pasteladega.com', shot: '/work/pasteladega.webp',
-  },
-  {
-    id: 'petiscos', index: '03', title: 'Petiscos by Adega', kicker: 'San Jose',
-    description: 'Restaurant, reservations and delivery.',
-    features: ['Restaurant', 'Reservations and delivery', ...EVERY_LAUNCH],
-    tech: SCOPE_CHIPS, url: 'https://petiscosadega.com', domain: 'petiscosadega.com', shot: '/work/petiscosadega.webp',
   },
   {
     id: 'auburn-sewing', index: '04', title: 'Auburn Sewing Studio', kicker: 'Auburn',
@@ -386,9 +387,6 @@ export const CASE_STUDY = {
     { value: '7', label: 'Launched client sites' },
     { value: '13', label: 'Example sites' },
     { value: '8', label: 'Motion ads' },
-    // across loomwest.com and the seven client sites (GoatCounter, loomwest/care/stats); refreshed on the 1st of each month
-    { value: '1,251', label: 'Site visits, Oct 6 to 10' },
-    { value: '194', label: 'Button taps: call, book, order' },
   ],
   shot: '/work/case-loomwest.webp',
   shotPhone: '/work/case-loomwest-phone.webp',
@@ -496,6 +494,10 @@ export type Achievement = {
 
 export const ACHIEVEMENTS: Achievement[] = [
   { value: 8, label: 'Sites live', caption: 'Seven for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
+  // across loomwest.com and the seven client sites (GoatCounter, loomwest/care/stats); refreshed on the 1st of each month.
+  // Moved here from the case study at Andre's ask (2026-10-12): they are numbers for every site built, not loomwest.com's.
+  { value: 1251, label: 'Site visits', caption: 'Across loomwest.com and the seven client sites, counted without cookies.', detail: 'Oct 6 to 10, 2026', icon: 'visits' },
+  { value: 194, label: 'Button taps', caption: 'Taps on call, book and order buttons across the same sites.', detail: 'Oct 6 to 10, 2026', icon: 'tap' },
   { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites at fixed prices, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
   { value: 13, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },

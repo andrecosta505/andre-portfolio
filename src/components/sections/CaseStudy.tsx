@@ -28,7 +28,7 @@ const css = `
 .cs-feat h3{display:flex;gap:10px;align-items:baseline;font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
 .cs-feat h3 span{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--mute)}
 .cs-feat p{margin-top:6px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
-.cs-stats{list-style:none;margin:26px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cs-stats{list-style:none;margin:26px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .cs-stats li{border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);padding:14px 14px 12px}
 .cs-stats b{display:block;font-size:clamp(30px,3vw,42px);font-weight:700;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
 .cs-stats span{display:block;margin-top:6px;font-size:12px;line-height:1.3;color:var(--ink-2)}

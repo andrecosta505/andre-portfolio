@@ -134,6 +134,19 @@ export const CONCEPT: Record<string, ReactNode> = {
       <path d="M26 16h7M26 26h7M26 36h7" />
     </>
   ),
+  visits: (
+    <>
+      <path d="M7 40h34" />
+      <path d="M13 40V29M21 40V22M29 40V26M37 40V13" />
+      <path d="m11 21 9-7 8 4 10-9" />
+    </>
+  ),
+  tap: (
+    <>
+      <path d="M19 17 37 25l-8 3-3 8Z" />
+      <path d="M15 7v5M7.5 10.5l3.5 3.5M5 18h5" />
+    </>
+  ),
 };
 
 export const isBrand = (k: string) => k in BRAND;

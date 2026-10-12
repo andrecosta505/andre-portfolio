@@ -155,7 +155,7 @@ async function open(browser, opts = {}) {
   await scrollToId(page, 'achievements', span);
   await sleep(2000);
   const nums = await page.evaluate(() => Array.from(document.querySelectorAll('.ach-num span[aria-hidden]')).map((s) => s.textContent));
-  const want = ['8', '2', '3–7', '13', '59', '67', '8', '19'];
+  const want = ['8', '1,251', '194', '2', '3–7', '13', '59', '67', '8', '19'];
   check('every achievement number counted up to its résumé value', JSON.stringify(nums) === JSON.stringify(want), nums.join(' | '));
   await scrollToId(page, 'achievements', -200);
   await sleep(1000);
@@ -241,7 +241,7 @@ async function open(browser, opts = {}) {
     return { imgs, st, stats: [...sec.querySelectorAll('.cs-stats b')].map((b) => b.textContent), feats: sec.querySelectorAll('.cs-feat li').length,
       cta: a ? [a.textContent.trim().slice(0, 18), a.href, a.target, a.rel] : null, title: sec.querySelector('h2')?.textContent };
   });
-  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 13 / 8 / 1,251 / 194, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|13|8|1,251|194' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
+  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 13 / 8, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|13|8' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
   // round 6: the hero moving in the case study's frames
   check('the first screen fetched nothing from the case study recordings', caseAtStart === 0, `${caseAtStart} requests at load`);
   const csv = () => page.evaluate(() => [...document.querySelectorAll('#case-study .cs-media')].map((m) => {
