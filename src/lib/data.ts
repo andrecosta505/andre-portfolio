@@ -497,14 +497,17 @@ export type Achievement = {
 // only when every check passes. Edit that script, not these lines. Numbers never go down: a missing or lower value keeps the last
 // shipped one (loomwest/finance/metrics/portfolio-numbers.json).
 // weekly numbers: pulled line begin
-export const NUMBERS_PULLED = 'Numbers pulled Sun, Oct 11, 2026, 12:58 PM PT. Updated every Sunday.';
+export const NUMBERS_PULLED = 'Numbers pulled Mon, Oct 12, 2026, 10:44 AM PT. Updated every Sunday.';
 // weekly numbers: pulled line end
 
 export const ACHIEVEMENTS: Achievement[] = [
   { value: 8, label: 'Sites live', caption: 'Seven for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
   // weekly numbers: cards begin
-  { value: 1251, label: 'Site visits', caption: 'Across loomwest.com and the seven client sites, counted without cookies.', detail: 'Oct 6 to 10, 2026', icon: 'visits' },
-  { value: 194, label: 'Button taps', caption: 'Taps on call, book and order buttons across the same sites.', detail: 'Oct 6 to 10, 2026', icon: 'tap' },
+  { value: 1554, label: 'Site visits', caption: 'On loomwest.com and the seven client sites since Oct 6, 2026, counted without cookies.', detail: 'As of Mon, Oct 12, 2026', icon: 'visits' },
+  { value: 238, label: 'Button taps', caption: 'Taps on call, book, order and contact buttons across the same sites.', detail: 'As of Mon, Oct 12, 2026', icon: 'tap' },
+  { value: 2585, label: 'People reached', caption: "People who saw Loomwest's own ads on Facebook and Instagram.", detail: 'As of Mon, Oct 12, 2026', icon: 'reach' },
+  { value: 4983, label: 'Instagram views', caption: 'Views of the @loomwest.design posts and Stories.', detail: 'As of Mon, Oct 12, 2026', icon: 'views' },
+  { value: 39, label: 'Shares', caption: 'Times people sent our Instagram posts and Stories on to someone.', detail: 'As of Mon, Oct 12, 2026', icon: 'share' },
   // weekly numbers: cards end
   { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites at fixed prices, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
