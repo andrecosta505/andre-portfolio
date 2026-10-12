@@ -36,12 +36,12 @@ export const metadata: Metadata = {
   title,
   description,
   // LAUNCHED 2026-10-07 (Andre: "yes take my portfolio off hidden from google once all changes are finished and live"):
-  // indexable, with one canonical address that matches public/sitemap.xml; robots.txt allows all and names the sitemap
+  // indexable, with one canonical address that matches public/sitemap.xml; robots.txt allows all and names the sitemap.
+  // The canonical and og:url are written in src/app/page.tsx since 2026-10-12 (audit L9): Next printed this one as
+  // https://andre.loomwest.com, without the slash the sitemap has.
   robots: { index: true, follow: true },
-  alternates: { canonical: 'https://andre.loomwest.com/' },
   openGraph: {
     type: 'website',
-    url: '/',
     siteName: PROFILE.name,
     title,
     description,
