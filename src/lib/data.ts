@@ -139,8 +139,8 @@ export const SKILL_GROUPS: { family: SkillFamily; skills: Skill[] }[] = [
   {
     family: 'Motion & video',
     skills: [
-      { n: 12, symbol: 'Mg', name: 'Motion graphics', family: 'Motion & video', logo: 'motion', usedIn: ['Eight motion films, designed, animated and scored in house', 'Built in code: brand type, drawn interfaces, an original score'] },
-      { n: 13, symbol: 'Sv', name: 'Short-form video', family: 'Motion & video', logo: 'reel', usedIn: ['The Report Card Reel on @loomwest.design, October 6, 2026', 'Instagram Story sets for two client launches'] },
+      { n: 12, symbol: 'Mg', name: 'Motion graphics', family: 'Motion & video', logo: 'motion', usedIn: ['Seven motion films, designed, animated and scored in house', 'Built in code: brand type, drawn interfaces, an original score'] },
+      { n: 13, symbol: 'Sv', name: 'Short-form video', family: 'Motion & video', logo: 'reel', usedIn: ['The Report Card Reel on @loomwest.design, October 6, 2026', 'The Petiscos by Adega Just Launched Reel, October 9, 2026', 'Instagram Story sets for two client launches'] },
       { n: 14, symbol: 'Av', name: 'AI video (Higgsfield)', family: 'Motion & video', logo: 'aivideo', usedIn: ["Hero films for the Fenwood Detail & Tint example site", "The animated mermaid in Soul Beauty Spa's launch Stories"] },
     ],
   },
@@ -307,7 +307,8 @@ export const EXAMPLES: Project[] = [
 ];
 
 // ---------------------------------------------------------------- motion and Reels (the third Work tab)
-// Andre 2026-10-07, about 9:35 PM. Finished, public films only: the eight motion films on loomwest.com's Content Studio &
+// Andre 2026-10-07, about 9:35 PM. Finished, public films only (2026-10-13: seven since the Referral film left loomwest.com on
+// 10/12, its words on screen carry prices; the Petiscos Just Launched Reel joined, posted 10/9): the motion films on loomwest.com's Content Studio &
 // Ads page (each title, length, style and line is that page's own, read 2026-10-07), and of the Reels hosted at
 // loomwest.com/assets/films/reels/ only the one already POSTED (the Report Card Reel, 2026-10-06 18:01, verified in
 // loomwest/instagram/schedule.json). Held or unposted Reels (Petiscos Just Launched, posting 10/9; the three seed-08 film
@@ -324,7 +325,7 @@ export type Film = {
   ran: { label: string; href: string }[];
 };
 export const MOTION_NOTE =
-  "Eight motion films made for Loomwest's own ads, designed, animated and scored in house. Silent previews here; each plays with sound on loomwest.com's Content Studio & Ads page.";
+  "Seven motion films made for Loomwest's own ads, designed, animated and scored in house, and the Reels posted on @loomwest.design. Silent previews here; the films play with sound on loomwest.com's Content Studio & Ads page, the Reels on Instagram.";
 const CONTENT = 'https://loomwest.com/content.html';
 const onContent = (anchor: string) => ({ label: "loomwest.com's Content Studio & Ads page", href: `${CONTENT}#${anchor}` });
 export const FILMS: Film[] = [
@@ -370,9 +371,9 @@ export const FILMS: Film[] = [
     ran: [onContent('film-detailers')],
   },
   {
-    id: 'referral-gift-19s-v6', index: '08', title: 'Referral', length: '39 seconds', style: 'Flat illustration',
-    line: "Two illustrated shops tied with a ribbon explain Loomwest's referral offer.",
-    ran: [onContent('film-referral')],
+    id: 'just-launched-01-petiscos-v2', index: '08', title: 'Just Launched No. 1: Petiscos by Adega', length: '38 seconds', style: 'Phone screens',
+    line: "Petiscos by Adega's new website: the old menu was a set of pictures, now every dish is real text you can search and translate, and a table or an order is one tap away.",
+    ran: [{ label: 'Instagram Reel, @loomwest.design with @petiscosadega, Oct 9, 2026', href: 'https://www.instagram.com/reel/DeS2nrXCc5F/' }],
   },
 ];
 
@@ -390,14 +391,14 @@ export const CASE_STUDY = {
     { title: 'An instant first look', text: 'While the visitor waits, Google PageSpeed Insights loads their page on a test phone for a mobile speed score, phone basics and AI readiness.' },
     { title: 'Tours on the Work page', text: "Hover a launched site's card, or tap it on a phone, for a quick scroll through the real site." },
     { title: 'The interactive loom grid', text: 'A faint thread grid behind the Work, FAQ and Team pages that the cursor weaves into fabric as it passes.' },
-    { title: 'Content Studio & Ads', text: 'Short-form video and local ads, with eight motion ads designed, animated and scored in house.' },
+    { title: 'Content Studio & Ads', text: 'Short-form video and local ads, with seven motion ads designed, animated and scored in house.' },
     { title: 'Booking a free call', text: 'A free 15-minute call picked straight from the calendar on any page, by Google Meet or in person, with the quote on the call.' },
   ],
   stats: [
     { value: '59', label: 'Report Cards published' },
     { value: '7', label: 'Launched client sites' },
     { value: '19', label: 'Example sites' },
-    { value: '8', label: 'Motion ads' },
+    { value: '7', label: 'Motion ads' },
   ],
   shot: '/work/case-loomwest.webp',
   shotPhone: '/work/case-loomwest-phone.webp',
@@ -454,7 +455,7 @@ export const LEARNING: LearningItem[] = [
       'Its vocabulary can be written as RDFa, Microdata or JSON-LD, and applications from Google, Microsoft, Pinterest, Yandex and others already use it.',
       'As of 2024, over 45 million web domains mark up their pages with Schema.org objects.',
     ],
-    loomwest: "loomwest.com and four client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
+    loomwest: "loomwest.com and all seven client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
     source: { label: 'schema.org', href: 'https://schema.org/' },
   },
   {
@@ -525,7 +526,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { value: 19, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },
   { value: 59, label: 'Report Cards', caption: 'Free reviews of how a business shows up online, each a private page.', detail: 'loomwest.com, since August 2026', icon: 'grade' },
   { value: 67, label: 'Treatments', caption: 'A searchable treatment menu for Soul Beauty Spa.', detail: 'soulbeautyspa.com', icon: 'search' },
-  { value: 8, label: 'Motion ads', caption: 'Designed, animated and scored in house for the Content Studio.', detail: 'loomwest.com/content.html', icon: 'film' },
+  { value: 7, label: 'Motion ads', caption: 'Designed, animated and scored in house for the Content Studio.', detail: 'loomwest.com/content.html', icon: 'film' },
   { value: 19, label: 'Launch checks', caption: 'The checklist every site passes before it goes live.', detail: 'Accessibility, privacy, claims', icon: 'checklist' },
 ];
 

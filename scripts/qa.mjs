@@ -247,7 +247,7 @@ async function open(browser, opts = {}) {
     return { imgs, st, stats: [...sec.querySelectorAll('.cs-stats b')].map((b) => b.textContent), feats: sec.querySelectorAll('.cs-feat li').length,
       cta: a ? [a.textContent.trim().slice(0, 18), a.href, a.target, a.rel] : null, title: sec.querySelector('h2')?.textContent };
   });
-  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 19 / 8, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|19|8' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
+  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 19 / 7, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|19|7' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
   // round 6: the hero moving in the case study's frames
   check('the first screen fetched nothing from the case study recordings', caseAtStart === 0, `${caseAtStart} requests at load`);
   const csv = () => page.evaluate(() => [...document.querySelectorAll('#case-study .cs-media')].map((m) => {
@@ -434,9 +434,9 @@ async function open(browser, opts = {}) {
     };
   });
   const f1 = await film();
-  check('Motion & Reels holds the eight films; the first plays its silent preview in view (muted, looping, with its poster, no controls)', f1.n === 8 && f1.titles.join('|') === 'Website Report Card|One Tap|On the Map|Five Checks|Before and After|Blueprint|Detailers|Referral' && f1.first && f1.first.src === '/motion/report-card-20s-v3.mp4' && /report-card-20s-v3-poster\.webp$/.test(f1.first.poster) && !f1.first.paused && f1.first.muted && f1.first.loop && !f1.first.controls && f1.btn[0] === 'true', JSON.stringify({ ...f1, links: undefined }));
-  const linkOk = f1.links.every((l, i) => l[0] && /^https:\/\/loomwest\.com\/content\.html#film-/.test(l[0][0]) && l[0][1] === '_blank') && f1.links[0][1]?.[0] === 'https://www.instagram.com/reel/DeLIQncghQH/' && f1.links.slice(1).every((l) => l.length === 1);
-  check('each film links "Watch with sound" to its place on loomwest.com in a new tab; the Report Card also to its posted Reel', linkOk, JSON.stringify(f1.links.map((l) => l.map((x) => x[0].replace('https://', '')))));
+  check('Motion & Reels holds the seven films and the Petiscos Reel; the first plays its silent preview in view (muted, looping, with its poster, no controls)', f1.n === 8 && f1.titles.join('|') === 'Website Report Card|One Tap|On the Map|Five Checks|Before and After|Blueprint|Detailers|Just Launched No. 1: Petiscos by Adega' && f1.first && f1.first.src === '/motion/report-card-20s-v3.mp4' && /report-card-20s-v3-poster\.webp$/.test(f1.first.poster) && !f1.first.paused && f1.first.muted && f1.first.loop && !f1.first.controls && f1.btn[0] === 'true', JSON.stringify({ ...f1, links: undefined }));
+  const linkOk = f1.links.slice(0, 7).every((l) => l[0] && /^https:\/\/loomwest\.com\/content\.html#film-/.test(l[0][0]) && l[0][1] === '_blank') && f1.links[0][1]?.[0] === 'https://www.instagram.com/reel/DeLIQncghQH/' && f1.links.slice(1).every((l) => l.length === 1) && f1.links[7][0]?.[0] === 'https://www.instagram.com/reel/DeS2nrXCc5F/' && f1.links[7][0]?.[1] === '_blank';
+  check('each film links "Watch with sound" to its place on loomwest.com in a new tab; the Report Card also to its posted Reel; the Petiscos Reel to Instagram', linkOk, JSON.stringify(f1.links.map((l) => l.map((x) => x[0].replace('https://', '')))));
   const media = await page.evaluate(async () => {
     const ids = [...document.querySelectorAll('#wk-tabpanel-motion .mo-card')].map((c) => c.dataset.film);
     const out = [];

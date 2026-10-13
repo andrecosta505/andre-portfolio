@@ -130,9 +130,9 @@ function FilmCard({ f }: { f: Film }) {
           <li key={r.href}>
             {i === 0 ? <span className="mo-ran-h" aria-hidden="true">Where it ran</span> : null}
             <a href={r.href} target="_blank" rel="noopener noreferrer">
-              {i === 0 ? 'Watch with sound on loomwest.com' : r.label}
+              {i === 0 && r.href.startsWith('https://loomwest.com/') ? 'Watch with sound on loomwest.com' : r.label}
               <ArrowUpRight />
-              <span className="sr-only">{i === 0 ? `, ${r.label}` : ''} (opens in a new tab)</span>
+              <span className="sr-only">{i === 0 && r.href.startsWith('https://loomwest.com/') ? `, ${r.label}` : ''} (opens in a new tab)</span>
             </a>
           </li>
         ))}
