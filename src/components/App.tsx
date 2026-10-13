@@ -1,6 +1,7 @@
 'use client';
 import { ScrollProvider } from '@/lib/scroll';
 import Hero from './hero/Hero';
+import Inspector from './Inspector';
 import Navigation from './Navigation';
 import About from './sections/About';
 import Achievements from './sections/Achievements';
@@ -34,6 +35,7 @@ export default function App() {
       </main>
       <Footer />
       <RevealObserver />
+      <Inspector />
     </ScrollProvider>
   );
 }

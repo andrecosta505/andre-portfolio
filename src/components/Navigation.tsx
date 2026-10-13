@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
-import { NAV, PROFILE } from '@/lib/data';
+import { NAV, PROFILE, SECTION_TAGS } from '@/lib/data';
 import { lockScroll, scrollToTarget } from '@/lib/scroll';
 import { Style } from './ui/Style';
 
@@ -51,7 +51,40 @@ const css = `
 .menu-foot{display:grid;gap:8px;font-family:var(--font-mono);font-size:14px;color:var(--ink-2)}
 .menu-foot a{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong);padding:6px 0}
 section[tabindex="-1"]:focus{outline:none}
+/* the spec sheet (Andre's pick, 2026-10-13): numbered spec lines, Home first, a PASS check on the section in view */
+.nav-pill{border-radius:8px;padding:4px}
+.nav-list{gap:0}
+.nav-list li + li{box-shadow:inset 1px 0 0 var(--line)}
+.nav-pill a{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-height:44px;padding:5px 12px 7px;border-radius:4px;
+  transition:color .45s var(--ease),background-color .2s var(--ease)}
+.nav-pill a:hover{background:rgba(13,13,13,.045)}
+.nav-pill a[aria-current="true"]{color:var(--ink)}
+.nav-n{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;line-height:1;letter-spacing:.06em;color:var(--mute)}
+.nav-l{font-size:13px;line-height:1;font-weight:500;letter-spacing:-.005em}
+.nav-pass{display:inline-flex;align-items:center;gap:3px;color:var(--ink);font-weight:600}
+.nav-pass svg,.menu-pass svg{width:9px;height:9px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nav-ind{top:auto;bottom:4px;height:2px;border-radius:1px}
+.nav-menu-btn,.menu-close{border-radius:8px}
+.menu-list .menu-pass{display:inline-flex;align-items:center;gap:5px;align-self:center;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.06em}
+.menu-list .menu-pass svg{width:11px;height:11px}
 `;
+
+// the spec sheet's lines: Home is 00, every other line carries its section's own number (SECTION_TAGS), so the nav
+// reads like a spec sheet that points at the sections
+const TAG_N: Record<string, string> = {
+  about: SECTION_TAGS.about.n,
+  skills: SECTION_TAGS.skills.n,
+  work: SECTION_TAGS.work.n,
+  experience: SECTION_TAGS.experience.n,
+  achievements: SECTION_TAGS.achievements.n,
+  contact: SECTION_TAGS.contact.n,
+};
+const TABS = [{ id: 'top', label: 'Home', n: '00' }, ...NAV.map((x) => ({ ...x, n: TAG_N[x.id] ?? '' }))];
+const Check = () => (
+  <svg viewBox="0 0 10 10" aria-hidden="true">
+    <path d="M1.6 5.4l2.3 2.3 4.5-5" />
+  </svg>
+);
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -166,7 +199,7 @@ export default function Navigation() {
             <div className="nav-pill">
               <span ref={indRef} className="nav-ind" aria-hidden="true" />
               <ul className="nav-list">
-              {NAV.map((n) => (
+              {TABS.map((n) => (
                 <li key={n.id}>
                   <a
                     href={`#${n.id}`}
@@ -176,7 +209,16 @@ export default function Navigation() {
                     aria-current={active === n.id ? 'true' : undefined}
                     onClick={go(n.id)}
                   >
-                    {n.label}
+                    <span className="nav-n" aria-hidden="true">
+                      {n.n}
+                      {active === n.id && (
+                        <span className="nav-pass">
+                          <Check />
+                          PASS
+                        </span>
+                      )}
+                    </span>
+                    <span className="nav-l">{n.label}</span>
                   </a>
                 </li>
               ))}
@@ -206,13 +248,24 @@ export default function Navigation() {
             </button>
           </div>
           <ol className="menu-list">
-            {NAV.map((n, i) => (
+            {TABS.map((n, i) => (
               <li key={n.id} style={{ ['--i' as string]: i }}>
-                <a href={`#${n.id}`} ref={i === 0 ? firstLinkRef : undefined} onClick={go(n.id)}>
+                <a
+                  href={`#${n.id}`}
+                  ref={i === 0 ? firstLinkRef : undefined}
+                  aria-current={active === n.id ? 'true' : undefined}
+                  onClick={go(n.id)}
+                >
                   <span className="menu-n" aria-hidden="true">
-                    {String(i + 1).padStart(2, '0')}
+                    {n.n}
                   </span>
                   <span>{n.label}</span>
+                  {active === n.id && (
+                    <span className="menu-pass" aria-hidden="true">
+                      <Check />
+                      PASS
+                    </span>
+                  )}
                 </a>
               </li>
             ))}

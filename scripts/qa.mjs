@@ -171,8 +171,25 @@ async function open(browser, opts = {}) {
   // nav: active pill follows the section
   await scrollToId(page, 'work');
   await sleep(1200);
-  const active = await page.evaluate(() => document.querySelector('.nav-list a[aria-current="true"]')?.textContent);
+  const active = await page.evaluate(() => document.querySelector('.nav-list a[aria-current="true"] .nav-l')?.textContent);
   check('nav indicator marks the section in view', active === 'Work', String(active));
+  // ---- 2026-10-13, Andre's pick: the spec-sheet nav (Home first as 00, every line numbered, PASS on the section in view)
+  const spec = await page.evaluate(() => [...document.querySelectorAll('.nav-list a')].map((a) => ({
+    n: a.querySelector('.nav-n')?.firstChild?.textContent, l: a.querySelector('.nav-l')?.textContent, pass: !!a.querySelector('.nav-pass'), cur: a.getAttribute('aria-current') })));
+  check('the nav is a spec sheet with Home first as 00', spec[0]?.l === 'Home' && spec[0]?.n === '00' && spec.every((x) => /^\d\d$/.test(x.n || '')), JSON.stringify(spec.map((x) => x.n + ' ' + x.l)));
+  check('only the section in view carries the PASS check', spec.filter((x) => x.pass).length === 1 && spec.find((x) => x.pass)?.cur === 'true', JSON.stringify(spec.filter((x) => x.pass)));
+  // ---- 2026-10-13, Andre's pick: the inspector cursor outlines what the pointer is over and names its real size
+  {
+    const tab = page.locator('[role="tab"]').first();
+    await tab.scrollIntoViewIfNeeded();
+    const bb = await tab.boundingBox();
+    await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps: 5 });
+    await sleep(450);
+    const ins = await page.evaluate(() => ({ on: document.querySelector('.insp')?.classList.contains('on'), text: document.querySelector('.insp-tag')?.innerText.replace(/\s+/g, ' '), hidden: document.querySelector('.insp')?.getAttribute('aria-hidden'), pe: getComputedStyle(document.querySelector('.insp')).pointerEvents }));
+    check('the inspector outlines a hovered tab and names it with its size', ins.on && /^tab .+ \d+ × \d+$/.test(ins.text || '') && ins.hidden === 'true' && ins.pe === 'none', JSON.stringify(ins));
+    await page.mouse.move(2, 2);
+    await sleep(300);
+  }
 
   // ---- round 3 (2026-10-07): the ghost word, the family tones, the Research block, the certification drawer
   const ghost = await page.evaluate(() => {
@@ -702,6 +719,8 @@ async function open(browser, opts = {}) {
       const th2 = await page.evaluate(() => document.querySelector('.ct-badge').getAttribute('aria-expanded'));
       check('a tap outside closes it', th2 === 'false', th2);
     }
+    const insPhone = await page.evaluate(() => document.querySelector('.insp')?.classList.contains('on'));
+    check(`no inspector outline on a phone at ${w}px (touch)`, insPhone === false, String(insPhone));
     check(`no console errors at ${w}px`, errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
@@ -712,6 +731,14 @@ async function open(browser, opts = {}) {
 {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
   const { ctx, page, errors } = await open(browser, { reduced: true });
+  {
+    const nb = await page.locator('.nav-list a').first().boundingBox();
+    await page.mouse.move(nb.x + 10, nb.y + 10, { steps: 3 });
+    await sleep(350);
+    const insR = await page.evaluate(() => document.querySelector('.insp')?.classList.contains('on'));
+    check('no inspector under reduced motion', insR === false, String(insR));
+    await page.mouse.move(2, 2);
+  }
   const r = await page.evaluate(() => ({ lenis: document.documentElement.classList.contains('lenis'), paused: document.querySelector('.hero video').paused, ach: document.getElementById('achievements').className }));
   check('reduced motion: no smooth scroll, the video waits for the button, achievements unpinned', !r.lenis && r.paused && r.ach.includes('is-static'), JSON.stringify(r));
   await scrollToId(page, 'work');
