@@ -25,6 +25,8 @@ const EXAMPLES = [
   // the five newest (2026-10-12) lead, as on loomwest.com's Work page. Endocarb's hero copy crossfades with its film, so
   // a fixed wait can land between two copies: its fifth field waits until the first copy is fully in, then shoots
   ['ex-endocarb', 'https://darkviolet-dog-746621.hostingersite.com/', 0, null, "+getComputedStyle(document.querySelector('h1').parentElement).opacity > 0.95"],
+  // Pantally (2026-10-13): the hero ticket prints for about 6 s; the shot waits until it is done
+  ['ex-pantally', 'https://green-mouse-865123.hostingersite.com/', 9000],
   ['ex-purlin', 'https://mediumvioletred-albatross-990231.hostingersite.com/', 7000],
   ['ex-tafoni', 'https://lawngreen-chough-431120.hostingersite.com/', 7000],
   ['ex-uvas', 'https://grey-oryx-957849.hostingersite.com/', 6000],

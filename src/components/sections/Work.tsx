@@ -12,7 +12,7 @@ import { MotionGrid } from './WorkMotion';
 // arrow keys (and Home / End) move and select, a tap or click selects.
 // Round 5 (Andre 2026-10-07, about 9:35 PM): a third tab, "Motion & Reels", Loomwest's motion films (WorkMotion.tsx),
 // and the heading becomes "Work I've made." On phones the tabs show short labels (Clients, Examples, Motion).
-// The example list holds eighteen panels since 2026-10-12, too many to run side by side (closed spines would be about
+// The example list holds nineteen panels since 2026-10-13 (eighteen since 2026-10-12), too many to run side by side (closed spines would be about
 // 37 px even at 1920), so it is a vertical accordion at every width, words and pictures side by side from 760 px.
 
 // the stacked (vertical) accordion, for phones and narrow screens; `p` scopes it to one list
