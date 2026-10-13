@@ -8,7 +8,7 @@
 // drawer (open by click, Enter and tap; Tab stays inside; Esc, the backdrop and Close shut it; focus returns to the
 // row; the page locks and unlocks; the official links).
 // Round 4 (2026-10-07): the Work switch (tablist, aria-selected, roving tabindex, click, arrow keys, Home and End, a
-// visible focus ring, tap on a phone; each tab's own panels: 7 client sites, 13 example sites each tagged "Example site,
+// visible focus ring, tap on a phone; each tab's own panels: 7 client sites, 18 example sites each tagged "Example site,
 // fictional business" with its style, a "View example" link and both screenshots answering 200; every panel opens),
 // the capstone PDF served from this site (200, application/pdf, %PDF), and the "Say hello" badge (a button that opens
 // its choices: the Email, Call, Text and Start a project links; focus moves in; Esc, a click or tap outside and Tab out
@@ -247,7 +247,7 @@ async function open(browser, opts = {}) {
     return { imgs, st, stats: [...sec.querySelectorAll('.cs-stats b')].map((b) => b.textContent), feats: sec.querySelectorAll('.cs-feat li').length,
       cta: a ? [a.textContent.trim().slice(0, 18), a.href, a.target, a.rel] : null, title: sec.querySelector('h2')?.textContent };
   });
-  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 13 / 8, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|13|8' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
+  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 7 / 18 / 8, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|7|18|8' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
   // round 6: the hero moving in the case study's frames
   check('the first screen fetched nothing from the case study recordings', caseAtStart === 0, `${caseAtStart} requests at load`);
   const csv = () => page.evaluate(() => [...document.querySelectorAll('#case-study .cs-media')].map((m) => {
@@ -349,29 +349,31 @@ async function open(browser, opts = {}) {
       return { spine: p.querySelector('.wk-vtitle').textContent, badge: p.querySelector('.wk-badge')?.textContent, style: p.querySelector('.wk-style')?.textContent, title: p.querySelector('.wk-title')?.textContent,
         cta: a ? [a.textContent.split(':')[0].trim(), a.href, a.target, a.rel] : null, imgs, caption: p.querySelector('figcaption')?.textContent };
     }));
-  const exOk = ex.length === 13 && ex.every((e) => e.badge === 'Example site, fictional business' && e.style === e.spine && /^The /.test(e.style) && e.cta && e.cta[0] === 'View example' && /^https:\/\/[a-z-]+-\d+\.hostingersite\.com\//.test(e.cta[1]) && e.cta[2] === '_blank' && /noopener/.test(e.cta[3]) && e.imgs.length === 2 && /^Example site/.test(e.caption));
-  check('the example tab holds the 13 example sites, each tagged "Example site, fictional business" with its style and a new-tab "View example"', exOk, ex.map((e) => `${e.spine}: ${e.title}`).join(' | '));
+  const exOk = ex.length === 18 && ex.every((e) => e.badge === 'Example site, fictional business' && e.style === e.spine && /^The /.test(e.style) && e.cta && e.cta[0] === 'View example' && /^https:\/\/[a-z-]+-\d+\.hostingersite\.com\//.test(e.cta[1]) && e.cta[2] === '_blank' && /noopener/.test(e.cta[3]) && e.imgs.length === 2 && /^Example site/.test(e.caption));
+  check('the example tab holds the 18 example sites, each tagged "Example site, fictional business" with its style and a new-tab "View example"', exOk, ex.map((e) => `${e.spine}: ${e.title}`).join(' | '));
   const shots = await page.evaluate(async () => {
     const srcs = [...document.querySelectorAll('#work .wk-panel img')].map((i) => i.getAttribute('src'));
     const bad = [];
     for (const s of srcs) { const r = await fetch(s, { cache: 'no-store' }); if (r.status !== 200 || !/webp/.test(r.headers.get('content-type') || '')) bad.push(`${s} ${r.status}`); }
     return { n: srcs.length, bad };
   });
-  check('every Work screenshot answers 200 (7 client and 13 example sites, desktop and phone)', shots.n === 40 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
+  check('every Work screenshot answers 200 (7 client and 18 example sites, desktop and phone)', shots.n === 50 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
   const opened = [];
-  for (let i = 0; i < 13; i++) {
-    await page.click(`#wk-tabpanel-examples .wk-panel >> nth=${i} >> .wk-spine`);
-    await sleep(i === 12 ? 1300 : 250);
+  for (let i = 0; i < 18; i++) {
+    // stacked, a click on an open panel folds it, and the first starts open: click only the closed ones
+    const already = await page.evaluate((k) => document.querySelectorAll('#wk-tabpanel-examples .wk-panel')[k].classList.contains('is-open'), i);
+    if (!already) await page.click(`#wk-tabpanel-examples .wk-panel >> nth=${i} >> .wk-spine`);
+    await sleep(i === 17 ? 1300 : 250);
     opened.push(await page.evaluate((k) => {
       const p = document.querySelectorAll('#wk-tabpanel-examples .wk-panel')[k];
       return p.classList.contains('is-open') && p.querySelector('.wk-spine').getAttribute('aria-expanded') === 'true' && !p.querySelector('.wk-body').inert;
     }, i));
   }
   const lastOpen = await page.evaluate(() => {
-    const p = document.querySelectorAll('#wk-tabpanel-examples .wk-panel')[12];
+    const p = document.querySelectorAll('#wk-tabpanel-examples .wk-panel')[17];
     return { w: Math.round(p.getBoundingClientRect().width), body: Math.round(p.querySelector('.wk-body').getBoundingClientRect().width), spine: Math.round(document.querySelector('#wk-tabpanel-examples .wk-panel:not(.is-open)').getBoundingClientRect().width) };
   });
-  check('each of the 13 example panels opens on click (expanded, its body live); closed spines stay readable', opened.every(Boolean) && lastOpen.body > 560 && lastOpen.spine >= 40, `${opened.filter(Boolean).length} of 13, open ${JSON.stringify(lastOpen)}`);
+  check('each of the 18 example panels opens on click (expanded, its body live); closed spines stay readable', opened.every(Boolean) && lastOpen.body > 560 && lastOpen.spine >= 40, `${opened.filter(Boolean).length} of 18, open ${JSON.stringify(lastOpen)}`);
   await page.screenshot({ path: `${SHOTS}/qa-work-examples-last.png` });
   await page.focus('#wk-tab-examples');
   await page.keyboard.press('ArrowLeft');
@@ -403,7 +405,7 @@ async function open(browser, opts = {}) {
     await page.click('#wk-tab-examples');
     await sleep(700);
     const o = await page.evaluate(() => ({ o: [document.documentElement.scrollWidth, innerWidth], dir: getComputedStyle(document.querySelector('#wk-tabpanel-examples .wk-list')).flexDirection }));
-    check(`example tab at ${w}px: no overflow, ${w >= 1280 ? 'side-by-side' : 'stacked'} accordion`, o.o[0] === o.o[1] && o.dir === (w >= 1280 ? 'row' : 'column'), JSON.stringify(o));
+    check(`example tab at ${w}px: no overflow, stacked accordion (eighteen panels, stacked at every width since 2026-10-12)`, o.o[0] === o.o[1] && o.dir === 'column', JSON.stringify(o));
     await page.click('#wk-tab-clients');
     await sleep(300);
   }

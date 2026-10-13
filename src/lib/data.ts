@@ -30,7 +30,7 @@ export const PROFILE = {
   linkedin: { label: 'linkedin.com/in/andre-costa-98535b199', href: 'https://www.linkedin.com/in/andre-costa-98535b199' } as LinkRef,
   // off until the profile is shaped up (see SHOW_GITHUB)
   github: (SHOW_GITHUB ? { label: 'github.com/andrecosta505', href: 'https://github.com/andrecosta505' } : null) as LinkRef | null,
-  // round 5 (Andre 2026-10-07): "but are losing", the day-job sentence gone, the summary ends on web design (the
+  // round 5 (Andre 2026-10-07): "but are losing", the background sentence gone, the summary ends on web design (the
   // nineteen-point launch checklist: vault, 06 - Resources/Website Compliance Checklist)
   resumeSummary:
     'I build websites for local businesses that are good at what they do but are losing customers to a search result. I design, write and build every Loomwest site by hand and stay the point of contact afterward. Before a site goes live, I measure it on a phone and check it against a nineteen-point launch checklist.',
@@ -90,7 +90,7 @@ export const ID_CARD = {
   back: [
     'Founder and designer, Loomwest',
     'Eight sites live, two more in client review',
-    'Thirteen example sites, thirteen styles',
+    'Eighteen example sites, eighteen styles',
     '59 Website Report Cards published',
     'Live in three to seven days',
   ],
@@ -107,8 +107,8 @@ export type Skill = {
   usedIn: string[]; // only where the résumé ties the skill to a job
 };
 
-// round 5 (2026-10-07): web design only, so the Engineering & field family (civil design, land surveying, septic
-// system design, AutoCAD) is off the table. Andre, about 9:35 PM the same evening: "make sure to add in skills about ads
+// round 5 (2026-10-07): web design only, so the engineering family is off the table (and since 2026-10-12 no page
+// names a job outside Loomwest). Andre, about 9:35 PM the same evening: "make sure to add in skills about ads
 // and marketing and video editing and motion graphics", so the families are Web, Ads & marketing, Motion & video and
 // Platforms, each "where it shows up" line from the vault (sources at the foot of resume-web.md). The ads client is not
 // named: no OK to show her work is on record.
@@ -173,7 +173,7 @@ export const PATH: PathStop[] = [
   { date: 'Aug 22, 2026', kind: 'Studio', title: 'loomwest.com goes live', place: 'loomwest.com', detail: "The studio's own site, on its own web address." },
   { date: 'Aug 23, 2026', kind: 'Service', title: 'The free Website Report Card', place: 'loomwest.com', detail: 'A request form on the site and the first Report Cards: private pages that review how a business shows up online.' },
   { date: 'Aug 27, 2026', kind: 'Launch', title: 'Nine Star Drywall', place: 'Hollister · ninestardrywall.com', detail: "Loomwest's first client launch, and the company's first website." },
-  { date: 'Aug 29, 2026', kind: 'Studio', title: 'The Work page and the design range', place: 'loomwest.com/work.html', detail: 'Launched work beside a range of example sites in different styles: six at first, thirteen now.' },
+  { date: 'Aug 29, 2026', kind: 'Studio', title: 'The Work page and the design range', place: 'loomwest.com/work.html', detail: 'Launched work beside a range of example sites in different styles: six at first, eighteen now.' },
   { date: 'Sep 4, 2026', kind: 'Launch', title: 'South County Window Cleaning', place: 'Gilroy · southcountywindowcleaning.com', detail: "Three pages, a before-and-after solar slider and the owner's own photography." },
   { date: 'Sep 10, 2026', kind: 'Launch', title: 'Faria Accountancy Corporation', place: 'San Jose · fariacpas.com', detail: "The firm's first website: one refined, type-led page." },
   { date: 'Sep 22, 2026', kind: 'Launch', title: 'Soul Beauty Spa', place: 'San Rafael · soulbeautyspa.com', detail: 'A searchable 67-treatment menu and booking from every section; at soulbeautyspa.com since September 24.' },
@@ -205,6 +205,7 @@ export type Project = {
   url?: string;
   domain?: string;
   shot?: string; // colour screenshot of the live site, captured 2026-10-07 (Andre 10/7: client screenshots in colour)
+  captured?: string; // the caption's capture date when it is not 7 Oct 2026
   // example sites only: the style's name on loomwest.com, which also labels the closed panel
   style?: string;
 };
@@ -260,7 +261,7 @@ export const IN_REVIEW_NOTE = 'Two more in client review: Trilogy Adult Services
 // ---------------------------------------------------------------- example sites (fictional businesses)
 // Andre 2026-10-07, about 4:35 PM: "we should also add our demo/mock sites to showcase our work and other styles too
 // alongside the sites we have live". The résumé's "Example sites" list, worded only from loomwest.com's Work page (The
-// design range: each card's style name and line; the business from the card's alt text). Only the thirteen public,
+// design range: each card's style name and line; the business from the card's alt text). Only the eighteen public,
 // finished examples shown there; each answered 200 on 2026-10-07 and says in its own footer "Example site by Loomwest.
 // The business, people and quotes are fictional." Client previews and private mocks stay off.
 // Andre 2026-10-07, about 9:35 PM: "we can even add in the examples of our motion graphics and reels where it fits in":
@@ -272,27 +273,34 @@ export const WORK_TABS = [
 ] as const;
 export const EXAMPLE_TAG = 'Example site, fictional business';
 export const EXAMPLES_NOTE =
-  "Fictional businesses Loomwest built to show its range of styles, none of them a client; each says so in its own footer, and all thirteen are on loomwest.com's Work page.";
+  "Fictional businesses Loomwest built to show its range of styles, none of them a client; each says so in its own footer and on a Sample site tab, and all eighteen are on loomwest.com's Work page.";
 
 const example = (index: string, id: string, title: string, kicker: string, style: string, description: string, address: string): Project => ({
   id: `ex-${id}`, index, title, kicker, style, description, features: [], tech: [],
   url: `https://${address}`, domain: address.replace(/\/$/, ''), shot: `/work/ex-${id}.webp`,
+  // the five added 2026-10-12 were captured that night
+  ...(['endocarb', 'purlin', 'tafoni', 'uvas', 'toyon'].includes(id) ? { captured: '12 Oct 2026' } : {}),
 });
 
 export const EXAMPLES: Project[] = [
-  example('01', 'contour', 'Contour Civil & Survey', 'Civil and survey firm', 'The Cinematic', 'Film-led, atmospheric, big.', 'palegreen-magpie-614090.hostingersite.com/'),
-  example('02', 'alta', 'ALTA Parfum', 'Fragrance shop', 'The Balanced', 'Warm, calm, easy scrolling.', 'blue-hawk-623227.hostingersite.com/'),
-  example('03', 'steep', 'STEEP Tea & Coffee', 'Cafe', 'The Clean & Simple', 'Phone-first and uncluttered.', 'lightslategray-rook-396983.hostingersite.com/'),
-  example('04', 'steep-editorial', 'STEEP Tea & Coffee', 'Cafe', 'The Editorial', 'Set like a Sunday magazine.', 'lightslategray-rook-396983.hostingersite.com/editorial/'),
-  example('05', 'slab', 'SLAB Strength Club', 'Strength club', 'The Brutalist', 'Raw concrete and black type.', 'lightslategrey-pony-429873.hostingersite.com/'),
-  example('06', 'heat', 'Heat Index', 'Sneaker shop', 'The Neo-Retro', 'Chrome, holograms, drop lists.', 'red-goose-215944.hostingersite.com/'),
-  example('07', 'moon', 'Moon Courier', 'Merch shop', 'The Desktop', 'A shop inside a 1989 computer.', 'powderblue-narwhal-823679.hostingersite.com/'),
-  example('08', 'vesta', 'VESTA', 'Candle brand', 'The Atelier', 'Editorial serif calm for premium brands.', 'lightgoldenrodyellow-badger-713438.hostingersite.com/'),
-  example('09', 'crucible', 'Crucible', 'Space company', 'The Launch', 'A fictional space company, built like a keynote.', 'mediumslateblue-oyster-794227.hostingersite.com/'),
-  example('10', 'vesper', 'Vesper', "Artist's sketchbook", 'The Sketchbook', "An artist's portfolio: the work first, the words second.", 'purple-elephant-184188.hostingersite.com/'),
-  example('11', 'longhand', 'Longhand Barber Co.', 'Barbershop', 'The Barbershop', 'A fictional shop: a film hero and a chair you can book.', 'darkslategray-wolverine-375239.hostingersite.com/'),
-  example('12', 'fenwood', 'Fenwood Detail & Tint', 'Detail and tint shop', 'The Detail Studio', 'A fictional detail and tint shop: a price search, a tint picker and booking.', 'gray-rail-206436.hostingersite.com/'),
-  example('13', 'marenfold', 'Marenfold', 'Design, photo and film studio', 'The Light Table', 'A fictional design, photo and film studio: work you can pick up and move around.', 'moccasin-locust-210497.hostingersite.com/'),
+  example('01', 'endocarb', 'Endocarb Materials', 'Battery-materials company', 'The Materials Lab', 'A fictional battery-materials maker: technical, grained and precise.', 'darkviolet-dog-746621.hostingersite.com/'),
+  example('02', 'purlin', 'Purlin & Stone', 'Architecture and design-build studio', 'The Design-Build Studio', 'A fictional architecture studio: motion that guides the eye and never steals the show.', 'mediumvioletred-albatross-990231.hostingersite.com/'),
+  example('03', 'tafoni', 'Tafoni', 'Trail footwear and clothing store', 'The Trail Store', 'A fictional boot and clothing label: a full shop with sizes, filters and a journal.', 'lawngreen-chough-431120.hostingersite.com/'),
+  example('04', 'uvas', 'Uvas Auto Works', 'Auto repair shop', 'The Auto Shop', 'A fictional repair shop: odometer counters, a services search and written estimates.', 'grey-oryx-957849.hostingersite.com/'),
+  example('05', 'toyon', 'Toyon Counseling', 'Counseling practice', 'The Counseling Practice', 'A fictional group practice: calm, private and clear about the first step.', 'mintcream-porpoise-910718.hostingersite.com/'),
+  example('06', 'contour', 'Contour Civil & Survey', 'Civil and survey firm', 'The Cinematic', 'Film-led, atmospheric, big.', 'palegreen-magpie-614090.hostingersite.com/'),
+  example('07', 'alta', 'ALTA Parfum', 'Fragrance shop', 'The Balanced', 'Warm, calm, easy scrolling.', 'blue-hawk-623227.hostingersite.com/'),
+  example('08', 'steep', 'STEEP Tea & Coffee', 'Cafe', 'The Clean & Simple', 'Phone-first and uncluttered.', 'lightslategray-rook-396983.hostingersite.com/'),
+  example('09', 'steep-editorial', 'STEEP Tea & Coffee', 'Cafe', 'The Editorial', 'Set like a Sunday magazine.', 'lightslategray-rook-396983.hostingersite.com/editorial/'),
+  example('10', 'slab', 'SLAB Strength Club', 'Strength club', 'The Brutalist', 'Raw concrete and black type.', 'lightslategrey-pony-429873.hostingersite.com/'),
+  example('11', 'heat', 'Heat Index', 'Sneaker shop', 'The Neo-Retro', 'Chrome, holograms, drop lists.', 'red-goose-215944.hostingersite.com/'),
+  example('12', 'moon', 'Moon Courier', 'Merch shop', 'The Desktop', 'A shop inside a 1989 computer.', 'powderblue-narwhal-823679.hostingersite.com/'),
+  example('13', 'vesta', 'VESTA', 'Candle brand', 'The Atelier', 'Editorial serif calm for premium brands.', 'lightgoldenrodyellow-badger-713438.hostingersite.com/'),
+  example('14', 'crucible', 'Crucible', 'Space company', 'The Launch', 'A fictional space company, built like a keynote.', 'mediumslateblue-oyster-794227.hostingersite.com/'),
+  example('15', 'vesper', 'Vesper', "Artist's sketchbook", 'The Sketchbook', "An artist's portfolio: the work first, the words second.", 'purple-elephant-184188.hostingersite.com/'),
+  example('16', 'longhand', 'Longhand Barber Co.', 'Barbershop', 'The Barbershop', 'A fictional shop: a film hero and a chair you can book.', 'darkslategray-wolverine-375239.hostingersite.com/'),
+  example('17', 'fenwood', 'Fenwood Detail & Tint', 'Detail and tint shop', 'The Detail Studio', 'A fictional detail and tint shop: a price search, a tint picker and booking.', 'gray-rail-206436.hostingersite.com/'),
+  example('18', 'marenfold', 'Marenfold', 'Design, photo and film studio', 'The Light Table', 'A fictional design, photo and film studio: work you can pick up and move around.', 'moccasin-locust-210497.hostingersite.com/'),
 ];
 
 // ---------------------------------------------------------------- motion and Reels (the third Work tab)
@@ -373,19 +381,19 @@ export const FILMS: Film[] = [
 export const CASE_STUDY = {
   kicker: 'loomwest.com · live since August 22, 2026',
   description:
-    "Loomwest's own site, designed, written and built by hand. It publishes every price, shows the launched work and the design range, and turns a visit into a request for a free Report Card or a build.",
+    "Loomwest's own site, designed, written and built by hand. It shows the launched work and the design range, and turns a visit into a booked free call or a request for a free Report Card.",
   features: [
     { title: 'The free Website Report Card', text: 'Five checks, starting with whether people can find the business on Google and in AI assistants, back within one business day.' },
     { title: 'An instant first look', text: 'While the visitor waits, Google PageSpeed Insights loads their page on a test phone for a mobile speed score, phone basics and AI readiness.' },
     { title: 'Tours on the Work page', text: "Hover a launched site's card, or tap it on a phone, for a quick scroll through the real site." },
     { title: 'The interactive loom grid', text: 'A faint thread grid behind the Work, FAQ and Team pages that the cursor weaves into fabric as it passes.' },
     { title: 'Content Studio & Ads', text: 'Short-form video and local ads, with eight motion ads designed, animated and scored in house.' },
-    { title: 'Booking a build', text: 'Pick a size and see the total, the deposit and the go-live date before anything is charged.' },
+    { title: 'Booking a free call', text: 'A free 15-minute call picked straight from the calendar on any page, by Google Meet or in person, with the quote on the call.' },
   ],
   stats: [
     { value: '59', label: 'Report Cards published' },
     { value: '7', label: 'Launched client sites' },
-    { value: '13', label: 'Example sites' },
+    { value: '18', label: 'Example sites' },
     { value: '8', label: 'Motion ads' },
   ],
   shot: '/work/case-loomwest.webp',
@@ -511,7 +519,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // weekly numbers: cards end
   { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites at fixed prices, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
-  { value: 13, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },
+  { value: 18, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },
   { value: 59, label: 'Report Cards', caption: 'Free reviews of how a business shows up online, each a private page.', detail: 'loomwest.com, since August 2026', icon: 'grade' },
   { value: 67, label: 'Treatments', caption: 'A searchable treatment menu for Soul Beauty Spa.', detail: 'soulbeautyspa.com', icon: 'search' },
   { value: 8, label: 'Motion ads', caption: 'Designed, animated and scored in house for the Content Studio.', detail: 'loomwest.com/content.html', icon: 'film' },

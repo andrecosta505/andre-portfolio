@@ -12,8 +12,8 @@ import { MotionGrid } from './WorkMotion';
 // arrow keys (and Home / End) move and select, a tap or click selects.
 // Round 5 (Andre 2026-10-07, about 9:35 PM): a third tab, "Motion & Reels", Loomwest's motion films (WorkMotion.tsx),
 // and the heading becomes "Work I've made." On phones the tabs show short labels (Clients, Examples, Motion).
-// The example list holds thirteen panels, so it runs with a narrower spine and a wider open panel, and stays a vertical
-// accordion up to 1279 px (at 1100 px thirteen closed spines would be about 34 px wide).
+// The example list holds eighteen panels since 2026-10-12, too many to run side by side (closed spines would be about
+// 37 px even at 1920), so it is a vertical accordion at every width, words and pictures side by side from 760 px.
 
 // the stacked (vertical) accordion, for phones and narrow screens; `p` scopes it to one list
 const vertical = (p: string) => `
@@ -92,23 +92,17 @@ const css = `
 .wk-phone img{display:block;width:100%;height:auto;aspect-ratio:390/844;object-fit:cover;border-radius:13px}
 /* the screenshots show in colour (Andre 2026-10-07); the rest of the page stays white, black and gray */
 .wk-shot{position:relative;margin:0 6px 14px 0}
-/* the thirteen-panel list's narrow spines, only while it runs side by side (stacked, it matches the client list) */
-@media (min-width: 1280px){
-  .wk-list.is-many .wk-spine{padding:18px 0 14px;border-radius:20px}
-  .wk-list.is-many .wk-vtitle{font-size:15px;max-height:calc(100% - 96px)}
-  .wk-list.is-many .wk-plus{width:30px;height:30px}
-}
 @media (max-width: 1099px){
   ${vertical('.wk-list')}
 }
-@media (min-width: 1100px) and (max-width: 1279px){
+@media (min-width: 1100px){
   ${vertical('.wk-list.is-many')}
 }
 /* stacked on a tablet or a narrow laptop: words and pictures side by side, so a screenshot never runs the full width */
 @media (min-width: 760px) and (max-width: 1099px){
   .wk-list .wk-body{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)}
 }
-@media (min-width: 1100px) and (max-width: 1279px){
+@media (min-width: 1100px){
   .wk-list.is-many .wk-body{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)}
 }
 @media (max-width: 759px){
@@ -140,7 +134,7 @@ function Visual({ p }: { p: Project }) {
         <img src={phone} alt={`The first screen of ${what} on a phone`} width={300} height={649} loading="lazy" decoding="async" />
       </div>
       <figcaption className="wk-label" style={{ marginTop: 26, maxWidth: '64%' }}>
-        {p.style ? 'Example site' : 'Live site'} · captured 7 Oct 2026
+        {p.style ? 'Example site' : 'Live site'} · captured {p.captured ?? '7 Oct 2026'}
       </figcaption>
     </figure>
   );
@@ -238,7 +232,7 @@ function Accordion({ items, name, minWide }: { items: Project[]; name: string; m
 
 const LISTS = {
   clients: { items: PROJECTS, note: IN_REVIEW_NOTE, minWide: 1100 },
-  examples: { items: EXAMPLES, note: EXAMPLES_NOTE, minWide: 1280 },
+  examples: { items: EXAMPLES, note: EXAMPLES_NOTE, minWide: 100000 },   // never side by side: always the stacked accordion
 };
 const COUNTS = { clients: PROJECTS.length, examples: EXAMPLES.length, motion: FILMS.length };
 

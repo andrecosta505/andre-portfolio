@@ -22,6 +22,13 @@ const CLIENTS = [
 // [slug, url, wait in ms before the shot, optional selector to click first]: the play-once hero films get long enough
 // to reach their held end frame; Moon Courier opens on a boot screen, so its "Boot the depot" control is clicked first
 const EXAMPLES = [
+  // the five newest (2026-10-12) lead, as on loomwest.com's Work page. Endocarb's hero copy crossfades with its film, so
+  // a fixed wait can land between two copies: its fifth field waits until the first copy is fully in, then shoots
+  ['ex-endocarb', 'https://darkviolet-dog-746621.hostingersite.com/', 0, null, "+getComputedStyle(document.querySelector('h1').parentElement).opacity > 0.95"],
+  ['ex-purlin', 'https://mediumvioletred-albatross-990231.hostingersite.com/', 7000],
+  ['ex-tafoni', 'https://lawngreen-chough-431120.hostingersite.com/', 7000],
+  ['ex-uvas', 'https://grey-oryx-957849.hostingersite.com/', 6000],
+  ['ex-toyon', 'https://mintcream-porpoise-910718.hostingersite.com/', 6000],
   ['ex-contour', 'https://palegreen-magpie-614090.hostingersite.com/', 6000],
   ['ex-alta', 'https://blue-hawk-623227.hostingersite.com/', 9000],
   ['ex-steep', 'https://lightslategray-rook-396983.hostingersite.com/', 4500],
@@ -57,10 +64,11 @@ const VIEWS = [
 ];
 for (const v of VIEWS) {
   const ctx = await browser.newContext({ viewport: v.viewport, deviceScaleFactor: v.mobile ? 2 : 1, isMobile: v.mobile, hasTouch: v.mobile, userAgent: v.ua });
-  for (const [slug, url, wait, clickFirst] of SITES) {
+  for (const [slug, url, wait, clickFirst, readyWhen] of SITES) {
     const page = await ctx.newPage();
     try {
-      await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
+      // a ready-wait site shoots its first copy, which a networkidle wait on a streaming film would miss
+      await page.goto(url, { waitUntil: readyWhen ? 'domcontentloaded' : 'networkidle', timeout: 60000 });
     } catch {
       await page.waitForTimeout(3000);
     }
@@ -70,7 +78,8 @@ for (const v of VIEWS) {
       await page.waitForTimeout(2500);
       await page.click(clickFirst, { timeout: 10000 }).catch((e) => console.log('click failed', slug, e.message));
     }
-    await page.waitForTimeout(+(process.env.WAIT || wait || 4500));
+    if (readyWhen) await page.waitForFunction(readyWhen, null, { timeout: 30000, polling: 100 }).catch(() => console.log('ready wait timed out', slug));
+    else await page.waitForTimeout(+(process.env.WAIT || wait || 4500));
     const png = new URL(slug + v.tag + '.png', tmp);
     await page.screenshot({ path: png.pathname.slice(1) });
     execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png.pathname.slice(1), '-vf', `scale=${v.out}:-2:flags=lanczos`,
