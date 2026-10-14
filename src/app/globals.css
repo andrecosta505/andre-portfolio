@@ -49,9 +49,12 @@
     line-height: 1.55;
     overflow-x: clip;
   }
+  /* text selection (Andre 2026-10-14: a custom highlight per site, to ADA guidelines): a pencil grey from the
+     palette, ink on #bdbab4 at 10.04:1 (WCAG AA 4.5:1), and visible on the paper and on the ink badges and buttons,
+     where the old ink-on-ink highlight disappeared */
   ::selection {
-    background: var(--ink);
-    color: var(--paper);
+    background: #bdbab4;
+    color: var(--ink);
   }
   a {
     color: inherit;
