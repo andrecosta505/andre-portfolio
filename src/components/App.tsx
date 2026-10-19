@@ -1,5 +1,6 @@
 'use client';
 import { ScrollProvider } from '@/lib/scroll';
+import Cursor from './Cursor';
 import Hero from './hero/Hero';
 import Inspector from './Inspector';
 import Navigation from './Navigation';
@@ -36,6 +37,7 @@ export default function App() {
       <Footer />
       <RevealObserver />
       <Inspector />
+      <Cursor />
     </ScrollProvider>
   );
 }
