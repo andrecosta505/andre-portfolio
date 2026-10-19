@@ -90,7 +90,7 @@ export const ID_CARD = {
   back: [
     'Founder and designer, Loomwest',
     'Eight sites live, two more in client review',
-    'Nineteen example sites, nineteen styles',
+    'Twenty example sites, twenty styles',
     '59 Website Report Cards published',
     'Live in three to seven days',
   ],
@@ -173,7 +173,7 @@ export const PATH: PathStop[] = [
   { date: 'Aug 22, 2026', kind: 'Studio', title: 'loomwest.com goes live', place: 'loomwest.com', detail: "The studio's own site, on its own web address." },
   { date: 'Aug 23, 2026', kind: 'Service', title: 'The free Website Report Card', place: 'loomwest.com', detail: 'A request form on the site and the first Report Cards: private pages that review how a business shows up online.' },
   { date: 'Aug 27, 2026', kind: 'Launch', title: 'Nine Star Drywall', place: 'Hollister · ninestardrywall.com', detail: "Loomwest's first client launch, and the company's first website." },
-  { date: 'Aug 29, 2026', kind: 'Studio', title: 'The Work page and the design range', place: 'loomwest.com/work.html', detail: 'Launched work beside a range of example sites in different styles: six at first, nineteen now.' },
+  { date: 'Aug 29, 2026', kind: 'Studio', title: 'The Work page and the design range', place: 'loomwest.com/work.html', detail: 'Launched work beside a range of example sites in different styles: six at first, twenty now.' },
   { date: 'Sep 4, 2026', kind: 'Launch', title: 'South County Window Cleaning', place: 'Gilroy · southcountywindowcleaning.com', detail: "Three pages, a before-and-after solar slider and the owner's own photography." },
   { date: 'Sep 10, 2026', kind: 'Launch', title: 'Faria Accountancy Corporation', place: 'San Jose · fariacpas.com', detail: "The firm's first website: one refined, type-led page." },
   { date: 'Sep 22, 2026', kind: 'Launch', title: 'Soul Beauty Spa', place: 'San Rafael · soulbeautyspa.com', detail: 'A searchable 67-treatment menu and booking from every section; at soulbeautyspa.com since September 24.' },
@@ -261,7 +261,7 @@ export const IN_REVIEW_NOTE = 'Two more in client review: Trilogy Adult Services
 // ---------------------------------------------------------------- example sites (fictional businesses)
 // Andre 2026-10-07, about 4:35 PM: "we should also add our demo/mock sites to showcase our work and other styles too
 // alongside the sites we have live". The résumé's "Example sites" list, worded only from loomwest.com's Work page (The
-// design range: each card's style name and line; the business from the card's alt text). Only the nineteen public,
+// design range: each card's style name and line; the business from the card's alt text). Only the twenty public,
 // finished examples shown there; each answered 200 on 2026-10-07 and says in its own footer "Example site by Loomwest.
 // The business, people and quotes are fictional." Client previews and private mocks stay off.
 // Andre 2026-10-07, about 9:35 PM: "we can even add in the examples of our motion graphics and reels where it fits in":
@@ -273,7 +273,7 @@ export const WORK_TABS = [
 ] as const;
 export const EXAMPLE_TAG = 'Example site, fictional business';
 export const EXAMPLES_NOTE =
-  "Fictional businesses Loomwest built to show its range of styles, none of them a client; each says so in its own footer and on a Sample site tab, and all nineteen are on loomwest.com's Work page.";
+  "Fictional businesses Loomwest built to show its range of styles, none of them a client; each says so in its own footer and on a Sample site tab, and all twenty are on loomwest.com's Work page.";
 
 const example = (index: string, id: string, title: string, kicker: string, style: string, description: string, address: string): Project => ({
   id: `ex-${id}`, index, title, kicker, style, description, features: [], tech: [],
@@ -282,6 +282,8 @@ const example = (index: string, id: string, title: string, kicker: string, style
   ...(['endocarb', 'purlin', 'tafoni', 'uvas', 'toyon'].includes(id) ? { captured: '12 Oct 2026' } : {}),
   // Pantally, the Signature build's public twin, joined 2026-10-13 (between Endocarb and Purlin, as on the Work page)
   ...(id === 'pantally' ? { captured: '13 Oct 2026' } : {}),
+  // Orvane, the halftone battery-cell example, joined 2026-10-19 (last on the Work page, as there)
+  ...(id === 'orvane' ? { captured: '19 Oct 2026' } : {}),
 });
 
 export const EXAMPLES: Project[] = [
@@ -304,6 +306,7 @@ export const EXAMPLES: Project[] = [
   example('17', 'longhand', 'Longhand Barber Co.', 'Barbershop', 'The Barbershop', 'A fictional shop: a film hero and a chair you can book.', 'darkslategray-wolverine-375239.hostingersite.com/'),
   example('18', 'fenwood', 'Fenwood Detail & Tint', 'Detail and tint shop', 'The Detail Studio', 'A fictional detail and tint shop: a price search, a tint picker and booking.', 'gray-rail-206436.hostingersite.com/'),
   example('19', 'marenfold', 'Marenfold', 'Design, photo and film studio', 'The Light Table', 'A fictional design, photo and film studio: work you can pick up and move around.', 'moccasin-locust-210497.hostingersite.com/'),
+  example('20', 'orvane', 'Orvane', 'Battery-cell company', 'The Dot Lab', 'A fictional battery company: the cell is drawn in dots that scatter under your cursor.', 'salmon-chinchilla-488033.hostingersite.com/'),
 ];
 
 // ---------------------------------------------------------------- motion and Reels (the third Work tab)
