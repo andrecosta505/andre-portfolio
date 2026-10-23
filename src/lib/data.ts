@@ -47,6 +47,15 @@ export const PROFILE = {
 export const INTRO_TRANSCRIPT =
   "Hi, I'm Andre. I'm the founder of Loomwest, a web design studio in Gilroy. I build fast, hand-built websites for local businesses, online in days.";
 
+// What the character says, line by line, timed to the silent loop (public/hero/intro.vtt). The hero shows the current
+// line in a speech bubble; the audio was taken out 2026-10-23 at Andre's ask.
+export const INTRO_CUES: { start: number; text: string }[] = [
+  { start: 0, text: "Hi, I'm Andre." },
+  { start: 1.42, text: "I'm the founder of Loomwest, a web design studio in Gilroy." },
+  { start: 4.82, text: 'I build fast, hand-built websites for local businesses,' },
+  { start: 7.02, text: 'online in days.' },
+];
+
 export type NavItem = { id: string; label: string };
 export const NAV: NavItem[] = [
   { id: 'about', label: 'About' },

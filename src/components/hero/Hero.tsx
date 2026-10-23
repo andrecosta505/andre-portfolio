@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
-import { INTRO_TRANSCRIPT, PROFILE } from '@/lib/data';
+import { INTRO_CUES, INTRO_TRANSCRIPT, PROFILE } from '@/lib/data';
 import { prefersReducedMotion } from '@/lib/hooks';
 import { scrollToTarget } from '@/lib/scroll';
 import { ArrowDown, ArrowRight, FileDown, Pause, Phone, Play } from '../ui/Icons';
@@ -31,14 +31,21 @@ const css = `
   text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:4px;padding:4px 0}
 .hero-phone svg{width:15px;height:15px}
 .hero-side{position:absolute;z-index:2;right:var(--gutter);bottom:clamp(48px,11vh,120px);display:flex;flex-direction:column;align-items:flex-end;gap:18px}
-.hero-sound{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;
+.hero-play{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;
   transition:transform .45s var(--ease),background-color .45s var(--ease)}
-.hero-sound:hover{transform:scale(1.06);background:#262626}
-.hero-sound svg{width:18px;height:18px}
-.hero-sound.is-blocked::after,.hero-sound.is-blocked::before{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1.5px var(--ink);
-  animation:hero-ping 2.2s var(--ease) infinite;pointer-events:none}
-.hero-sound.is-blocked::before{animation-delay:1.1s}
-@keyframes hero-ping{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.9);opacity:0}}
+.hero-play:hover{transform:scale(1.06);background:#262626}
+.hero-play svg{width:18px;height:18px}
+/* the speech bubble: what the character is saying (the video is silent since 2026-10-23), beside his head, its tail
+   pointing at his mouth; the line changes with the captions' timing */
+.hero-bubble{position:absolute;z-index:1;left:59%;top:7%;max-width:min(300px,40%);padding:12px 15px;border-radius:10px;background:#fff;
+  color:var(--ink);border:1px solid var(--line-strong);box-shadow:0 10px 30px -12px rgba(13,13,13,.25);font-size:15px;line-height:1.35;
+  font-weight:500;letter-spacing:-.01em;opacity:0;transition:opacity .5s var(--ease) .6s}
+.hero.is-ready .hero-bubble{opacity:1}
+.hero-bubble::before{content:"";position:absolute;left:-8px;top:22px;width:14px;height:14px;background:#fff;border-left:1px solid var(--line-strong);
+  border-bottom:1px solid var(--line-strong);transform:rotate(45deg)}
+.hero-bubble span{display:block;animation:bubble-in .35s var(--ease) both}
+@keyframes bubble-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.hero-bubble span{animation:none}}
 .hero-scroll{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);padding:4px 0}
 .hero-scroll svg{width:14px;height:14px;animation:hero-bob 2.4s var(--ease) infinite}
 @keyframes hero-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
@@ -51,6 +58,8 @@ const css = `
   .hero-h{margin:14px 0 22px}
   .hero-ctas{justify-content:center}
   .hero-side{right:var(--gutter);bottom:auto;top:calc(72px + 62svh - 58px)}
+  .hero-bubble{left:56%;top:5%;max-width:44%;font-size:13px;padding:9px 11px}
+  .hero-bubble::before{top:16px;width:12px;height:12px;left:-7px}
   .hero-scroll{display:none}
 }
 `;
@@ -64,14 +73,11 @@ const GHOST = { viewBox: '-8 -149 514.6 154', letterSpacing: '0.02em', opacity: 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const soundBtnRef = useRef<HTMLButtonElement>(null);
-  const [soundOn, setSoundOn] = useState(false);
-  const [blocked, setBlocked] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [line, setLine] = useState(0);
   const [ready, setReady] = useState(false);
   const userPaused = useRef(false);
   const visible = useRef(true);
-  const blockedRef = useRef(false);
-  blockedRef.current = blocked;
 
   useEffect(() => {
     // the ghost word fades in once its serif has loaded, so a fallback face never flashes in its place
@@ -79,96 +85,53 @@ export default function Hero() {
     else setReady(true);
     const v = videoRef.current;
     if (!v) return;
-    const reduced = prefersReducedMotion();
-
-    // 1. try to play with sound; if the browser blocks it, play muted and wait for the first interaction
-    const start = async () => {
-      if (reduced) {
-        userPaused.current = true; // nothing moves on its own; the button plays it
-        return;
-      }
-      v.muted = false;
-      try {
-        await v.play();
-        setSoundOn(true);
-        setBlocked(false);
-      } catch {
-        v.muted = true;
-        setSoundOn(false);
-        setBlocked(true);
-        try {
-          await v.play();
-        } catch {
-          /* even muted autoplay refused (data saver): the poster stays and the button plays it */
-        }
-      }
+    // silent since 2026-10-23 (Andre: "remove the audio ... just add a little text bubble with what the character is
+    // saying"): the loop always plays muted, and the bubble follows the caption timing
+    v.muted = true;
+    const onTime = () => {
+      let i = 0;
+      for (let k = 0; k < INTRO_CUES.length; k++) if (v.currentTime >= INTRO_CUES[k].start) i = k;
+      setLine(i);
     };
-    start();
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    v.addEventListener('timeupdate', onTime);
+    v.addEventListener('play', onPlay);
+    v.addEventListener('pause', onPause);
+    if (prefersReducedMotion()) userPaused.current = true; // nothing moves on its own; the button plays it
+    else v.play().catch(() => {/* data saver refused even muted autoplay: the poster stays and the button plays it */});
 
-    // 2. unlock the sound on the visitor's first pointerdown, keydown or touchend anywhere on the page
-    const unlock = (e: Event) => {
-      if (soundBtnRef.current && e.target instanceof Node && soundBtnRef.current.contains(e.target)) return;
-      if (!blockedRef.current || userPaused.current || !visible.current) return;
-      v.muted = false;
-      v.play()
-        .then(() => {
-          setSoundOn(true);
-          setBlocked(false);
-          remove();
-        })
-        .catch(() => {
-          v.muted = true;
-          v.play().catch(() => {});
-        });
-    };
-    const evs = ['pointerdown', 'keydown', 'touchend'] as const;
-    const remove = () => evs.forEach((t) => window.removeEventListener(t, unlock, true));
-    evs.forEach((t) => window.addEventListener(t, unlock, { capture: true, passive: true }));
-
-    // 3. the voice plays only while the hero is on screen: pause under 35 % visible, resume on return
+    // it plays only while the hero is on screen: pause under 35 % visible, resume on return
     const io = new IntersectionObserver(
       ([entry]) => {
         visible.current = entry.intersectionRatio >= 0.35;
         if (!visible.current) {
           if (!v.paused) v.pause();
         } else if (!userPaused.current && v.paused) {
-          v.play().catch(() => {
-            v.muted = true;
-            setSoundOn(false);
-            setBlocked(true);
-            v.play().catch(() => {});
-          });
+          v.play().catch(() => {});
         }
       },
       { threshold: [0, 0.2, 0.35, 0.5, 1] },
     );
     if (sectionRef.current) io.observe(sectionRef.current);
     return () => {
-      remove();
+      v.removeEventListener('timeupdate', onTime);
+      v.removeEventListener('play', onPlay);
+      v.removeEventListener('pause', onPause);
       io.disconnect();
     };
   }, []);
 
-  const toggleSound = () => {
+  const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (soundOn && !v.paused) {
+    if (!v.paused) {
       v.pause();
       userPaused.current = true;
-      setSoundOn(false);
       return;
     }
     userPaused.current = false;
-    v.muted = false;
-    v.play()
-      .then(() => {
-        setSoundOn(true);
-        setBlocked(false);
-      })
-      .catch(() => {
-        v.muted = true;
-        setBlocked(true);
-      });
+    v.play().catch(() => {});
   };
 
   const go = (id: string) => (e: MouseEvent<HTMLAnchorElement>) => {
@@ -200,6 +163,9 @@ export default function Hero() {
         </text>
       </svg>
       <div className="hero-stage">
+        <p className="hero-bubble" aria-hidden="true">
+          <span key={line}>{INTRO_CUES[line].text}</span>
+        </p>
         <video
           ref={videoRef}
           muted
@@ -207,7 +173,7 @@ export default function Hero() {
           playsInline
           preload="auto"
           poster="/hero/poster.webp"
-          aria-label={`Intro video: ${PROFILE.firstName}'s 3D character introduces himself`}
+          aria-label={`Intro video: ${PROFILE.firstName}'s 3D character introduces himself (silent, the words are in the bubble)`}
           aria-describedby="intro-transcript"
         >
           <source src="/hero/hero.webm" type="video/webm" />
@@ -251,14 +217,8 @@ export default function Hero() {
         </a>
       </div>
       <div className="hero-side">
-        <button
-          ref={soundBtnRef}
-          type="button"
-          className={`hero-sound${blocked ? ' is-blocked' : ''}`}
-          onClick={toggleSound}
-          aria-label={soundOn ? 'Pause the intro video' : 'Play the intro video with sound'}
-        >
-          {soundOn ? <Pause /> : <Play />}
+        <button type="button" className="hero-play" onClick={togglePlay} aria-label={playing ? 'Pause the intro video' : 'Play the intro video'}>
+          {playing ? <Pause /> : <Play />}
         </button>
         <a className="hero-scroll" href="#about" onClick={go('about')}>
           Scroll <ArrowDown />

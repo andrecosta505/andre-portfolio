@@ -8,7 +8,7 @@
 // drawer (open by click, Enter and tap; Tab stays inside; Esc, the backdrop and Close shut it; focus returns to the
 // row; the page locks and unlocks; the official links).
 // Round 4 (2026-10-07): the Work switch (tablist, aria-selected, roving tabindex, click, arrow keys, Home and End, a
-// visible focus ring, tap on a phone; each tab's own panels: 7 client sites, 19 example sites each tagged "Example site,
+// visible focus ring, tap on a phone; each tab's own panels: 7 client sites, 20 example sites each tagged "Example site,
 // fictional business" with its style, a "View example" link and both screenshots answering 200; every panel opens),
 // the capstone PDF served from this site (200, application/pdf, %PDF), and the "Say hello" badge (a button that opens
 // its choices: the Email, Call, Text and Start a project links; focus moves in; Esc, a click or tap outside and Tab out
@@ -69,8 +69,8 @@ async function open(browser, opts = {}) {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
   const { ctx, page, errors, reqs } = await open(browser);
   const caseAtStart = reqs.filter((u) => /\/work\/case-loomwest[^/]*\.mp4/.test(u)).length;
-  const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-sound').getAttribute('aria-label') }; });
-  check('hero video plays with sound when the browser allows it', !v0.paused && !v0.muted, JSON.stringify(v0));
+  const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-play').getAttribute('aria-label'), bubble: document.querySelector('.hero-bubble').textContent }; });
+  check('hero video plays silently (muted, no audio since 2026-10-23) with the speech bubble showing a line', !v0.paused && v0.muted && v0.bubble.length > 5, JSON.stringify(v0));
   check('hero video is the webm/mp4 loop of about 9.5 s', v0.loop && Math.abs(v0.dur - 9.5) < 0.15, `${v0.src}, ${v0.dur?.toFixed(3)} s`);
   // loops: watch currentTime wrap past the end
   const t1 = await page.evaluate(() => document.querySelector('.hero video').currentTime);
@@ -83,24 +83,27 @@ async function open(browser, opts = {}) {
     last = t;
   }
   const after = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, ended: document.querySelector('.hero video').ended }));
+  const seenLines = new Set();
+  for (let i = 0; i < 22; i++) { seenLines.add(await page.evaluate(() => document.querySelector('.hero-bubble').textContent)); await sleep(500); }
+  check('the speech bubble follows the four caption lines over the loop', seenLines.size === 4, [...seenLines].join(' | '));
   check('hero video loops (currentTime wrapped, never ended)', wrapped && !after.paused && !after.ended, `start ${t1.toFixed(2)} s, wrapped=${wrapped}`);
   await scrollToId(page, 'about');
   await sleep(900);
   const offHero = await page.evaluate(() => document.querySelector('.hero video').paused);
-  check('voice pauses once the hero is scrolled away (under 35 % visible)', offHero);
+  check('the video pauses once the hero is scrolled away (under 35 % visible)', offHero);
   await page.evaluate(() => window.scrollTo(0, 0));
   await sleep(900);
   const back = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted }));
-  check('voice resumes on returning to the hero', !back.paused && !back.muted, JSON.stringify(back));
-  await page.click('.hero-sound');
+  check('it resumes, still muted, on returning to the hero', !back.paused && back.muted, JSON.stringify(back));
+  await page.click('.hero-play');
   await sleep(300);
-  const p1 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, label: document.querySelector('.hero-sound').getAttribute('aria-label'), icon: document.querySelector('.hero-sound svg rect') ? 'bars' : 'triangle' }));
-  check('sound button (bars) pauses the voice and shows the triangle', p1.paused && p1.icon === 'triangle', JSON.stringify(p1));
+  const p1 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, label: document.querySelector('.hero-play').getAttribute('aria-label'), icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
+  check('the button (bars) pauses the video and shows the triangle', p1.paused && p1.icon === 'triangle', JSON.stringify(p1));
   await page.screenshot({ path: `${SHOTS}/qa-hero-paused.png` });
-  await page.click('.hero-sound');
+  await page.click('.hero-play');
   await sleep(400);
-  const p2 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, icon: document.querySelector('.hero-sound svg rect') ? 'bars' : 'triangle' }));
-  check('sound button (triangle) plays it again with sound and shows the bars', !p2.paused && !p2.muted && p2.icon === 'bars', JSON.stringify(p2));
+  const p2 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
+  check('the button (triangle) plays it again, muted, and shows the bars', !p2.paused && p2.muted && p2.icon === 'bars', JSON.stringify(p2));
 
   // the ID card: swing by mouse, flip by hover and by keyboard
   await scrollToId(page, 'about');
@@ -366,15 +369,15 @@ async function open(browser, opts = {}) {
       return { spine: p.querySelector('.wk-vtitle').textContent, badge: p.querySelector('.wk-badge')?.textContent, style: p.querySelector('.wk-style')?.textContent, title: p.querySelector('.wk-title')?.textContent,
         cta: a ? [a.textContent.split(':')[0].trim(), a.href, a.target, a.rel] : null, imgs, caption: p.querySelector('figcaption')?.textContent };
     }));
-  const exOk = ex.length === 19 && ex.every((e) => e.badge === 'Example site, fictional business' && e.style === e.spine && /^The /.test(e.style) && e.cta && e.cta[0] === 'View example' && /^https:\/\/[a-z-]+-\d+\.hostingersite\.com\//.test(e.cta[1]) && e.cta[2] === '_blank' && /noopener/.test(e.cta[3]) && e.imgs.length === 2 && /^Example site/.test(e.caption));
-  check('the example tab holds the 19 example sites, each tagged "Example site, fictional business" with its style and a new-tab "View example"', exOk, ex.map((e) => `${e.spine}: ${e.title}`).join(' | '));
+  const exOk = ex.length === 20 && ex.every((e) => e.badge === 'Example site, fictional business' && e.style === e.spine && /^The /.test(e.style) && e.cta && e.cta[0] === 'View example' && /^https:\/\/[a-z-]+-\d+\.hostingersite\.com\//.test(e.cta[1]) && e.cta[2] === '_blank' && /noopener/.test(e.cta[3]) && e.imgs.length === 2 && /^Example site/.test(e.caption));
+  check('the example tab holds the 20 example sites, each tagged "Example site, fictional business" with its style and a new-tab "View example"', exOk, ex.map((e) => `${e.spine}: ${e.title}`).join(' | '));
   const shots = await page.evaluate(async () => {
     const srcs = [...document.querySelectorAll('#work .wk-panel img')].map((i) => i.getAttribute('src'));
     const bad = [];
     for (const s of srcs) { const r = await fetch(s, { cache: 'no-store' }); if (r.status !== 200 || !/webp/.test(r.headers.get('content-type') || '')) bad.push(`${s} ${r.status}`); }
     return { n: srcs.length, bad };
   });
-  check('every Work screenshot answers 200 (7 client and 19 example sites, desktop and phone)', shots.n === 52 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
+  check('every Work screenshot answers 200 (7 client and 20 example sites, desktop and phone)', shots.n === 54 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
   const opened = [];
   for (let i = 0; i < 19; i++) {
     // stacked, a click on an open panel folds it, and the first starts open: click only the closed ones
@@ -390,7 +393,7 @@ async function open(browser, opts = {}) {
     const p = document.querySelectorAll('#wk-tabpanel-examples .wk-panel')[18];
     return { w: Math.round(p.getBoundingClientRect().width), body: Math.round(p.querySelector('.wk-body').getBoundingClientRect().width), spine: Math.round(document.querySelector('#wk-tabpanel-examples .wk-panel:not(.is-open)').getBoundingClientRect().width) };
   });
-  check('each of the 19 example panels opens on click (expanded, its body live); closed spines stay readable', opened.every(Boolean) && lastOpen.body > 560 && lastOpen.spine >= 40, `${opened.filter(Boolean).length} of 19, open ${JSON.stringify(lastOpen)}`);
+  check('each of the 20 example panels opens on click (expanded, its body live); closed spines stay readable', opened.every(Boolean) && lastOpen.body > 560 && lastOpen.spine >= 40, `${opened.filter(Boolean).length} of 19, open ${JSON.stringify(lastOpen)}`);
   await page.screenshot({ path: `${SHOTS}/qa-work-examples-last.png` });
   await page.focus('#wk-tab-examples');
   await page.keyboard.press('ArrowLeft');
@@ -600,17 +603,13 @@ async function open(browser, opts = {}) {
   await browser.close();
 }
 
-// ---------------------------------------------------------------- 2. autoplay with sound blocked: muted, ping, unlock
+// ---------------------------------------------------------------- 2. strict autoplay policy: the silent loop still plays
 {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=document-user-activation-required'] });
   const { ctx, page, errors } = await open(browser);
-  const b = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, ping: document.querySelector('.hero-sound').classList.contains('is-blocked') }));
-  check('when sound is blocked the video still plays, muted, with the ping ring', !b.paused && b.muted && b.ping, JSON.stringify(b));
-  await page.mouse.click(700, 300);
-  await sleep(600);
-  const u = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, ping: document.querySelector('.hero-sound').classList.contains('is-blocked') }));
-  check('the first click anywhere unlocks the voice', !u.paused && !u.muted && !u.ping, JSON.stringify(u));
-  check('no console errors with autoplay blocked', errors.length === 0, errors.join(' | '));
+  const b = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, bubble: document.querySelector('.hero-bubble').textContent }));
+  check('under a strict autoplay policy the silent video still plays with its bubble', !b.paused && b.muted && b.bubble.length > 5, JSON.stringify(b));
+  check('no console errors under a strict autoplay policy', errors.length === 0, errors.join(' | '));
   await ctx.close();
   await browser.close();
 }
