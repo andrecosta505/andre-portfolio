@@ -9,3 +9,9 @@ qa/
 RUNBOOK.md
 resume/resume-full.html
 resume/Andre-Costa-Resume-full.pdf
+
+# Originkit sources fetched for a port stay on this PC: Originkit grants use in your own projects, not redistribution
+# (its pricing FAQ, read 2026-10-28), and this repo is public. The Venom button's engine is one of those ports: it stays
+# here too, and a public clone builds with src/lib/venom-stub.ts in its place (tsconfig.json paths)
+docs/originkit-*
+src/lib/venom.ts

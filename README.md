@@ -37,9 +37,12 @@ npm run build    # static site in out/
 - Fonts: Inter Tight, Instrument Serif and JetBrains Mono (SIL Open Font License 1.1, via fontsource; licence texts in
   `src/fonts/`).
 - Logos: devicon (MIT) and simple-icons (CC0); the marks remain their owners' trademarks (`public/logos/`).
+- The liquid effect on the two main buttons is adapted from the Venom Button by [Originkit](https://originkit.dev).
+  Its engine is not in this repository (Originkit's terms do not allow redistribution), so a clone builds with the plain
+  buttons (`src/lib/venom-stub.ts`).
 - Client screenshots are shown with each client's permission. Example sites and the businesses in the motion films are
   fictional, as each one says.
-- Inspired by the "Build your own talking-video portfolio" guide by Lohitha Damisetti; all code, images and text here
-  are my own.
+- Inspired by the "Build your own talking-video portfolio" guide by Lohitha Damisetti; apart from the credits above, all
+  code, images and text here are my own.
 
 © 2026 Andre Costa. All rights reserved.

@@ -5,6 +5,7 @@ import { scrollToTarget } from '@/lib/scroll';
 import { ArrowUp, ArrowUpRight, Check, Copy, GitHub, Globe, Instagram, LinkedIn, Mail, Phone } from '../ui/Icons';
 import { SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 const css = `
 .ct{padding-bottom:0}
@@ -251,9 +252,10 @@ export default function Contact() {
               </span>
             </div>
             <div className="ct-links rv" style={{ ['--i' as string]: 1 }}>
-              <a className="btn btn-primary" href={PROFILE.phoneHref}>
+              {/* the contact call to action wears the Venom goo too (Originkit, ported 2026-10-28; see ui/Venom.tsx) */}
+              <VenomLink className="btn btn-primary" href={PROFILE.phoneHref}>
                 <Phone /> {PROFILE.phone}
-              </a>
+              </VenomLink>
               <a className="btn btn-ghost" href={PROFILE.website.href} target="_blank" rel="noopener noreferrer">
                 <Globe /> {PROFILE.website.label}
               </a>

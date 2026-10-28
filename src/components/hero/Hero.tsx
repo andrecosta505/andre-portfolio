@@ -5,6 +5,7 @@ import { prefersReducedMotion } from '@/lib/hooks';
 import { scrollToTarget } from '@/lib/scroll';
 import { ArrowDown, ArrowRight, FileDown, Pause, Phone, Play } from '../ui/Icons';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 const css = `
 /* isolation keeps the multiply blend inside the hero, against its own paper background and the ghost word */
@@ -202,9 +203,10 @@ export default function Hero() {
           </span>
         </h1>
         <div className="hero-ctas h-rv" style={{ ['--i' as string]: 2 }}>
-          <a className="btn btn-primary" href="#work" onClick={go('work')}>
+          {/* the main call to action wears the Venom goo (Originkit, ported 2026-10-28; see ui/Venom.tsx) */}
+          <VenomLink className="btn btn-primary" href="#work" onClick={go('work')}>
             Explore work <ArrowRight />
-          </a>
+          </VenomLink>
           <a className="btn btn-ghost" href="#contact" onClick={go('contact')}>
             Let&apos;s talk
           </a>
