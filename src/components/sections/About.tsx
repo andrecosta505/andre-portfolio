@@ -5,6 +5,7 @@ import { useInView, useReducedMotion } from '@/lib/hooks';
 import { ArrowUpRight, FileDown } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 const css = `
 .about-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px minmax(0,1fr);gap:clamp(24px,3vw,56px);align-items:stretch}
@@ -271,21 +272,21 @@ export default function About() {
             {PROFILE.extraLine}
           </p>
           <div className="about-btns rv" style={{ ['--i' as string]: 2 }}>
-            <a className="btn btn-primary" href={PROFILE.resume} download={PROFILE.resumeFileName}>
+            <VenomLink className="btn btn-primary" href={PROFILE.resume} download={PROFILE.resumeFileName}>
               Résumé <FileDown />
-            </a>
-            <a className="btn btn-ghost" href={PROFILE.linkedin.href} target="_blank" rel="noopener noreferrer">
+            </VenomLink>
+            <VenomLink className="btn btn-ghost" href={PROFILE.linkedin.href} target="_blank" rel="noopener noreferrer">
               LinkedIn <ArrowUpRight />
-            </a>
+            </VenomLink>
             {/* prepared, off until the profile is shaped up: renders only when SHOW_GITHUB is true (lib/data.ts) */}
             {PROFILE.github ? (
-              <a className="btn btn-ghost" href={PROFILE.github.href} target="_blank" rel="noopener noreferrer">
+              <VenomLink className="btn btn-ghost" href={PROFILE.github.href} target="_blank" rel="noopener noreferrer">
                 GitHub <ArrowUpRight />
-              </a>
+              </VenomLink>
             ) : null}
-            <a className="btn btn-ghost" href={PROFILE.website.href} target="_blank" rel="noopener noreferrer">
+            <VenomLink className="btn btn-ghost" href={PROFILE.website.href} target="_blank" rel="noopener noreferrer">
               {PROFILE.website.label} <ArrowUpRight />
-            </a>
+            </VenomLink>
           </div>
         </div>
         <div className="about-mid">

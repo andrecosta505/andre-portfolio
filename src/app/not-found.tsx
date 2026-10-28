@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import VenomLink from '@/components/ui/Venom';
 import { PROFILE } from '@/lib/data';
 
 export const metadata: Metadata = {
@@ -21,12 +21,13 @@ export default function NotFound() {
         This address does not exist. Everything lives on one page.
       </p>
       <p style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <Link className="btn btn-primary" href="/">
+        {/* the Venom goo, as on every button of the portfolio (ui/Venom.tsx); a plain link home, as this page is static */}
+        <VenomLink className="btn btn-primary" href="/">
           Back to the portfolio
-        </Link>
-        <a className="btn btn-ghost" href={PROFILE.phoneHref}>
+        </VenomLink>
+        <VenomLink className="btn btn-ghost" href={PROFILE.phoneHref}>
           {PROFILE.phone}
-        </a>
+        </VenomLink>
       </p>
     </main>
   );

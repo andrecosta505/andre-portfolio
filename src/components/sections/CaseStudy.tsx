@@ -5,6 +5,7 @@ import { prefersReducedMotion, useReducedMotion } from '@/lib/hooks';
 import { ArrowUpRight, Pause, Play } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 // Round 5 (Andre 2026-10-07): the Research slot becomes a featured case study of loomwest.com, "my company's own site",
 // between Always learning and Experience. Words and numbers from the live site and the vault (lib/data.ts names the
@@ -186,10 +187,10 @@ export default function CaseStudy() {
             ))}
           </ul>
           <div className="cs-cta rv">
-            <a className="btn btn-primary" href={c.url} target="_blank" rel="noopener noreferrer">
+            <VenomLink className="btn btn-primary" href={c.url} target="_blank" rel="noopener noreferrer">
               {c.cta} <ArrowUpRight />
               <span className="sr-only"> (opens in a new tab)</span>
-            </a>
+            </VenomLink>
           </div>
         </div>
         <figure className="cs-fig rv">

@@ -180,6 +180,37 @@
     color: #fff;
     transform: translateY(-2px);
   }
+  /* the Venom goo on every .btn (components/ui/Venom.tsx, 2026-10-28): the canvas sits under the label; while the goo
+     runs (.vn-on) the hover lift and its shadow step aside, as a press squeezes the button with the goo's spring */
+  .vn {
+    position: relative;
+    isolation: isolate;
+  }
+  .vn-t {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: inherit;
+  }
+  .vn-c {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .btn.vn-on {
+    transition: background-color 0.45s var(--ease), color 0.45s var(--ease);
+  }
+  .btn.vn-on:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--ink);
+  }
 
   .sr-only {
     position: absolute;

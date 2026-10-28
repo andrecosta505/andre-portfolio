@@ -6,6 +6,7 @@ import { scrollToTarget } from '@/lib/scroll';
 import { ArrowRight } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 // Round 5 (Andre 2026-10-07): web design only, so the path is Loomwest's journey, real dated milestones from the vault,
 // ending on "Next: your business?".
@@ -107,9 +108,9 @@ export default function Experience() {
                   {PATH_NEXT.title} <em className="accent">{PATH_NEXT.accent}</em>
                 </h3>
                 <p>{PATH_NEXT.line}</p>
-                <a className="btn btn-primary" href="#contact" onClick={go}>
+                <VenomLink className="btn btn-primary" href="#contact" onClick={go}>
                   Let&apos;s talk <ArrowRight />
-                </a>
+                </VenomLink>
               </div>
             </li>
           </ol>

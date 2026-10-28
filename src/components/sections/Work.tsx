@@ -4,6 +4,7 @@ import { EXAMPLES, EXAMPLES_NOTE, EXAMPLE_TAG, FILMS, IN_REVIEW_NOTE, MOTION_NOT
 import { ArrowUpRight, Plus } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 import { MotionGrid } from './WorkMotion';
 
 // Round 4 (Andre 2026-10-07): a two-way switch over "Sites I've built": the live client sites (the default) and
@@ -210,12 +211,12 @@ function Accordion({ items, name, minWide }: { items: Project[]; name: string; m
                 ) : null}
                 {p.url ? (
                   <div className="wk-cta">
-                    <a className="btn btn-primary" href={p.url} target="_blank" rel="noopener noreferrer">
+                    <VenomLink className="btn btn-primary" href={p.url} target="_blank" rel="noopener noreferrer">
                       {p.style ? 'View example' : 'Visit site'} <ArrowUpRight />
                       <span className="sr-only">
                         : {p.style ? `${p.title}, ${p.style}, a fictional business` : p.domain} (opens in a new tab)
                       </span>
-                    </a>
+                    </VenomLink>
                   </div>
                 ) : null}
               </div>

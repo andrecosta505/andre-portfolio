@@ -5,6 +5,7 @@ import { lockScroll } from '@/lib/scroll';
 import { ArrowRight, ArrowUpRight } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
+import VenomLink from '../ui/Venom';
 
 // Round 5 (Andre 2026-10-07): "Always learning" is the new web skills Loomwest has learned and put to work, only ones in
 // real use. Each row opens a side drawer (the pattern round 3 built for the certifications): what it is, written only
@@ -214,10 +215,10 @@ export default function Learning() {
               <p>{c.loomwest}</p>
             </div>
             <div className="ld-cta">
-              <a className="btn btn-primary" href={c.source.href} target="_blank" rel="noopener noreferrer">
+              <VenomLink className="btn btn-primary" href={c.source.href} target="_blank" rel="noopener noreferrer">
                 Official details <ArrowUpRight />
                 <span className="sr-only">: {c.source.label} (opens in a new tab)</span>
-              </a>
+              </VenomLink>
             </div>
             <p className="ld-src">What it is: from the official page, {c.source.label}, read 7 Oct 2026</p>
           </div>

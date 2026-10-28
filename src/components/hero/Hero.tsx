@@ -203,16 +203,16 @@ export default function Hero() {
           </span>
         </h1>
         <div className="hero-ctas h-rv" style={{ ['--i' as string]: 2 }}>
-          {/* the main call to action wears the Venom goo (Originkit, ported 2026-10-28; see ui/Venom.tsx) */}
+          {/* every button wears the Venom goo (Originkit, ported 2026-10-28; on all of them since about 4:15 PM; see ui/Venom.tsx) */}
           <VenomLink className="btn btn-primary" href="#work" onClick={go('work')}>
             Explore work <ArrowRight />
           </VenomLink>
-          <a className="btn btn-ghost" href="#contact" onClick={go('contact')}>
+          <VenomLink className="btn btn-ghost" href="#contact" onClick={go('contact')}>
             Let&apos;s talk
-          </a>
-          <a className="btn btn-ghost" href={PROFILE.resume} download={PROFILE.resumeFileName}>
+          </VenomLink>
+          <VenomLink className="btn btn-ghost" href={PROFILE.resume} download={PROFILE.resumeFileName}>
             Résumé <FileDown />
-          </a>
+          </VenomLink>
         </div>
         <a className="hero-phone h-rv" style={{ ['--i' as string]: 3 }} href={PROFILE.phoneHref}>
           <Phone /> {PROFILE.phone}

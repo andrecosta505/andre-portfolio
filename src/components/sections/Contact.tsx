@@ -252,24 +252,24 @@ export default function Contact() {
               </span>
             </div>
             <div className="ct-links rv" style={{ ['--i' as string]: 1 }}>
-              {/* the contact call to action wears the Venom goo too (Originkit, ported 2026-10-28; see ui/Venom.tsx) */}
+              {/* every button wears the Venom goo (Originkit, ported 2026-10-28; see ui/Venom.tsx) */}
               <VenomLink className="btn btn-primary" href={PROFILE.phoneHref}>
                 <Phone /> {PROFILE.phone}
               </VenomLink>
-              <a className="btn btn-ghost" href={PROFILE.website.href} target="_blank" rel="noopener noreferrer">
+              <VenomLink className="btn btn-ghost" href={PROFILE.website.href} target="_blank" rel="noopener noreferrer">
                 <Globe /> {PROFILE.website.label}
-              </a>
-              <a className="btn btn-ghost" href={PROFILE.instagram.href} target="_blank" rel="noopener noreferrer">
+              </VenomLink>
+              <VenomLink className="btn btn-ghost" href={PROFILE.instagram.href} target="_blank" rel="noopener noreferrer">
                 <Instagram /> Instagram
-              </a>
-              <a className="btn btn-ghost" href={PROFILE.linkedin.href} target="_blank" rel="noopener noreferrer">
+              </VenomLink>
+              <VenomLink className="btn btn-ghost" href={PROFILE.linkedin.href} target="_blank" rel="noopener noreferrer">
                 <LinkedIn /> LinkedIn
-              </a>
+              </VenomLink>
               {/* prepared, off until the profile is shaped up: renders only when SHOW_GITHUB is true (lib/data.ts) */}
               {PROFILE.github ? (
-                <a className="btn btn-ghost" href={PROFILE.github.href} target="_blank" rel="noopener noreferrer">
+                <VenomLink className="btn btn-ghost" href={PROFILE.github.href} target="_blank" rel="noopener noreferrer">
                   <GitHub /> GitHub
-                </a>
+                </VenomLink>
               ) : null}
             </div>
           </div>
