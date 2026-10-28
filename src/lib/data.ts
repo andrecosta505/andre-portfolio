@@ -190,6 +190,7 @@ export const PATH: PathStop[] = [
   { date: 'Oct 2, 2026', kind: 'Launch', title: 'Pastelaria Adega', place: 'San Jose · pasteladega.com', detail: 'Bakery, ordering, markets on a map.' },
   { date: 'Oct 5, 2026', kind: 'Launch', title: 'Petiscos by Adega', place: 'San Jose · petiscosadega.com', detail: 'Restaurant, reservations and delivery.' },
   { date: 'Oct 5, 2026', kind: 'Service', title: 'The Content Studio opens', place: 'loomwest.com/content.html', detail: 'Short-form video and local ads for clients, shown with eight motion ads designed, animated and scored in house.' },
+  { date: 'Oct 23, 2026', kind: 'Launch', title: 'Dreamland Gardens', place: 'Claymont, Delaware · dreamlandgardens.com', detail: 'A homepage redesign for an online garden and outdoor store on Shopify.' },
 ];
 
 export const PATH_NEXT = {
@@ -262,6 +263,15 @@ export const PROJECTS: Project[] = [
     description: "One refined, type-led page with the owner's services, logo, photo and credentials.",
     features: ['One refined, type-led page', "The owner's services, logo, photo and credentials", ...EVERY_LAUNCH],
     tech: SCOPE_CHIPS, url: 'https://fariacpas.com', domain: 'fariacpas.com', shot: '/work/fariacpas.webp',
+  },
+  // Dreamland Gardens (2026-10-28, live 2026-10-23): a homepage redesign on the store's own Shopify theme, not a site
+  // build, so it is not counted in "seven client sites" and EVERY_LAUNCH (review form, privacy page, map links, visit
+  // counting) does not apply; its features are its own, from resume-web.md and loomwest.com's Work page row #dreamland.
+  {
+    id: 'dreamland', index: '08', title: 'Dreamland Gardens', kicker: 'Claymont, Delaware',
+    description: 'Homepage redesign for an online garden and outdoor store on Shopify; the rest of the store is the owner\'s own.',
+    features: ['Previewed on a copy of the theme', 'Live-text banner', 'Shop-by-category tiles', 'Five product rows that swipe on a phone'],
+    tech: SCOPE_CHIPS, url: 'https://dreamlandgardens.com', domain: 'dreamlandgardens.com', shot: '/work/dreamlandgardens.webp', captured: '28 Oct 2026',
   },
 ];
 

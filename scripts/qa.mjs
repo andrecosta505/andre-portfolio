@@ -8,7 +8,7 @@
 // drawer (open by click, Enter and tap; Tab stays inside; Esc, the backdrop and Close shut it; focus returns to the
 // row; the page locks and unlocks; the official links).
 // Round 4 (2026-10-07): the Work switch (tablist, aria-selected, roving tabindex, click, arrow keys, Home and End, a
-// visible focus ring, tap on a phone; each tab's own panels: 7 client sites, 20 example sites each tagged "Example site,
+// visible focus ring, tap on a phone; each tab's own panels: 8 client panels (7 sites and, since 2026-10-28, the Dreamland Gardens homepage), 20 example sites each tagged "Example site,
 // fictional business" with its style, a "View example" link and both screenshots answering 200; every panel opens),
 // the capstone PDF served from this site (200, application/pdf, %PDF), and the "Say hello" badge (a button that opens
 // its choices: the Email, Call, Text and Start a project links; focus moves in; Esc, a click or tap outside and Tab out
@@ -17,7 +17,7 @@
 // certification words anywhere on the page, the capstone PDF gone (404); the new summary and quote; three skill
 // families (13 elements); "Always learning" (#learning: six rows, each drawer with what it is, how Loomwest uses it and
 // its official link, by click, Enter and tap); the loomwest.com case study (#case-study: both colour screenshots 200,
-// the four numbers, "Visit loomwest.com" in a new tab); Experience as Loomwest's twelve dated milestones ending on
+// the four numbers, "Visit loomwest.com" in a new tab); Experience as Loomwest's dated milestones (thirteen since 2026-10-28) ending on
 // "Next: your business?"; the web-only achievement numbers; the résumé PDF still 200. Round 5 addition (Andre, about
 // 9:35 PM): four skill families (Web, Ads & marketing, Motion & video, Platforms; 17 elements) and the third Work tab,
 // "Motion & Reels": nothing from /motion/ in the first load, eight film cards, each a silent looping preview that loads
@@ -234,7 +234,7 @@ async function open(browser, opts = {}) {
     return { ids, tags, panels };
   });
   check('sections run Work, Always learning, the case study, Experience and the tags read 01 to 08', order.ids.join() === 'top,about,skills,work,learning,case-study,experience,achievements,contact' && order.tags.join() === '01,02,03,04,05,06,07,08', `${order.ids.join(' > ')} | ${order.tags.join(' ')}`);
-  check('the "Live client sites" tab holds the seven client sites only (no capstone, no examples)', order.panels.length === 7 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
+  check('the "Live client sites" tab holds the seven client sites and the Dreamland Gardens homepage only (no capstone, no examples)', order.panels.length === 8 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
   // ---- round 5 (2026-10-07): web design only
   const web = await page.evaluate(async () => {
     const text = document.body.innerText;
@@ -317,8 +317,8 @@ async function open(browser, opts = {}) {
     stops: [...document.querySelectorAll('#experience .xp-stop .xp-card')].map((c) => c.querySelector('.xp-year').childNodes[0].textContent.trim() + ' ' + c.querySelector('.xp-title').textContent),
     next: document.querySelector('#experience .xp-next h3')?.textContent,
   }));
-  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens'];
-  check('Experience is Loomwest\'s twelve dated milestones, in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
+  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens', 'Oct 23, 2026 Dreamland Gardens'];
+  check('Experience is Loomwest\'s thirteen dated milestones (Dreamland Gardens since 2026-10-28), in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
 
   // ---- launch (2026-10-07): indexable, one canonical address, robots.txt allows all and names the sitemap
   const seo = await page.evaluate(async () => {
@@ -377,7 +377,7 @@ async function open(browser, opts = {}) {
     for (const s of srcs) { const r = await fetch(s, { cache: 'no-store' }); if (r.status !== 200 || !/webp/.test(r.headers.get('content-type') || '')) bad.push(`${s} ${r.status}`); }
     return { n: srcs.length, bad };
   });
-  check('every Work screenshot answers 200 (7 client and 20 example sites, desktop and phone)', shots.n === 54 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
+  check('every Work screenshot answers 200 (8 client and 20 example sites, desktop and phone)', shots.n === 56 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
   const opened = [];
   for (let i = 0; i < 19; i++) {
     // stacked, a click on an open panel folds it, and the first starts open: click only the closed ones

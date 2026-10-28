@@ -18,6 +18,11 @@ const CLIENTS = [
   ['southcountywindowcleaning', 'https://southcountywindowcleaning.com/'],
   ['ninestardrywall', 'https://ninestardrywall.com/'],
   ['fariacpas', 'https://fariacpas.com/'],
+  // Dreamland Gardens (2026-10-28): Loomwest's homepage redesign on the store's own Shopify theme, live 2026-10-23. The
+  // ready check takes the store's announcement bar out first (its own promotion, not Loomwest's work, and on 10/28 still
+  // saying a sale "Ends October 26"; loomwest.com's tour hides it the same way), then shoots once at least 6 s have passed
+  // and every image on the first screen has loaded (the default wait is 4.5 s)
+  ['dreamlandgardens', 'https://dreamlandgardens.com/', 0, null, "(() => { document.querySelectorAll('[id*=\"__announcement-bar\"]').forEach((b) => b.remove()); return performance.now() > 6000 && document.readyState === 'complete' && [...document.images].filter((i) => i.getBoundingClientRect().top < innerHeight && i.getBoundingClientRect().bottom > 0).every((i) => i.complete); })()"],
 ];
 // [slug, url, wait in ms before the shot, optional selector to click first]: the play-once hero films get long enough
 // to reach their held end frame; Moon Courier opens on a boot screen, so its "Boot the depot" control is clicked first
