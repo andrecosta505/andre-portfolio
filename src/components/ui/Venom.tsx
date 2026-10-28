@@ -1,13 +1,14 @@
 'use client';
 import { useEffect, useRef, useState, type AnchorHTMLAttributes, type ReactNode } from 'react';
-import type { Venom } from '@venom-engine';
+import type { Venom } from '@venom-engine/venom';
 import { Style } from './Style';
 
 /* The Venom button (Andre's pick, 2026-10-28: "the venom one would look cool"), ported from Originkit's "Venom Button"
  * (https://originkit.dev). Credit: Originkit. The engine, lib/venom.ts, stays on Andre's PC and out of the public repo
- * (Originkit's terms allow use in your own projects, not redistribution): "@venom-engine" resolves to it when it is
- * there and to lib/venom-stub.ts when it is not (tsconfig.json paths), and the stub's startVenom returns null, so a public
- * clone builds and shows the plain buttons. The portfolio's main calls to action stay the
+ * (Originkit's terms allow use in your own projects, not redistribution): "@venom-engine/venom" resolves to it when it is
+ * there and to lib/venom-stub.ts when it is not (tsconfig.json paths, "@venom-engine/*" tries lib/*.ts, then
+ * lib/*-stub.ts), and the stub's startVenom returns null, so a public clone builds and shows the plain buttons. The
+ * portfolio's main calls to action stay the
  * plain .btn links they always were: same shape, same ink, same words, working with JavaScript off. On a mouse with motion
  * allowed, the link gains two canvases under its label: the glossy liquid body and its strands (WebGL) and the fine hairs
  * (2D). At rest they cover only the button and its soft shadow; while the goo moves they open to MARGIN px past it, so the
@@ -74,7 +75,7 @@ export default function VenomLink({ children, className = '', ...rest }: Props) 
     let dead = false;
     const go = () => {
       if (dead) return;
-      import('@venom-engine')
+      import('@venom-engine/venom')
         .then(({ startVenom, toRgb }) => {
           if (dead) return;
           const root = getComputedStyle(document.documentElement);

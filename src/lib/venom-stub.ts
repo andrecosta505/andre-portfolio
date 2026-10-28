@@ -1,9 +1,11 @@
 /* The public stand-in for the Venom button's engine. The effect on the portfolio's two main buttons is adapted from the
  * Venom Button by Originkit (https://originkit.dev). Originkit's terms allow use in your own projects but not
  * redistribution, so the engine (lib/venom.ts) stays on Andre's PC and is not in this public repository.
- * tsconfig.json maps "@venom-engine" to lib/venom.ts first and to this file when that one is absent, for both TypeScript
- * and the Next.js build. Here startVenom returns null, so components/ui/Venom.tsx keeps the plain .btn link: the same
- * shape, ink, words and link, with no canvases. */
+ * tsconfig.json maps "@venom-engine/venom" to lib/venom.ts first and to this file when that one is absent
+ * ("@venom-engine/*": lib/*.ts, then lib/*-stub.ts), for both TypeScript and the Next.js build. (The key needs its
+ * wildcard: SWC refuses a fallback list on a plain key, and Next skips the substitution when the wildcard matches
+ * nothing.) Here startVenom returns null, so components/ui/Venom.tsx keeps the plain .btn link: the same shape, ink,
+ * words and link, with no canvases. */
 
 type RGB = [number, number, number];
 
