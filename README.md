@@ -40,6 +40,8 @@ npm run build    # static site in out/
 - The liquid effect on nearly every button is adapted from the Venom Button by [Originkit](https://originkit.dev).
   Its engine is not in this repository (Originkit's terms do not allow redistribution), so a clone builds with the plain
   buttons (`src/lib/venom-stub.ts`).
+- A hidden easter egg in the hero plays Rick Astley's official "Never Gonna Give You Up" video in YouTube's
+  privacy-enhanced player (youtube-nocookie.com); nothing from YouTube loads unless a visitor triggers it.
 - Client screenshots are shown with each client's permission. Example sites and the businesses in the motion films are
   fictional, as each one says.
 - Inspired by the "Build your own talking-video portfolio" guide by Lohitha Damisetti; apart from the credits above, all

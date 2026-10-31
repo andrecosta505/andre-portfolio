@@ -49,6 +49,9 @@ export const FileDown = (p: P) => (
 export const Play = (p: P) => (
   <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" {...p}><path d="M8.5 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.7 5.1a.8.8 0 0 0-1.2.7Z" fill="currentColor" /></svg>
 );
+export const Speaker = (p: P) => (
+  <svg {...base} {...p}><path d="M4 9.5h3.2L12 5.8v12.4l-4.8-3.7H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" /><path d="M15.6 9.4a3.6 3.6 0 0 1 0 5.2M18.2 6.8a7.3 7.3 0 0 1 0 10.4" /></svg>
+);
 export const Pause = (p: P) => (
   <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" {...p}><rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" /><rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" /></svg>
 );

@@ -29,7 +29,7 @@ const jetbrainsMono = localFont({
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 const title = `${PROFILE.name} | ${PROFILE.roleLine}`;
 const description =
-  'Andre Costa, founder and designer of Loomwest in Gilroy, California. Websites for local businesses at fixed prices, live in three to seven days.';
+  'Andre Costa, founder and designer of Loomwest in Gilroy, California. Websites for local businesses, quoted on a free call, live in three to seven days.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

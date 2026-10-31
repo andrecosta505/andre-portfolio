@@ -35,7 +35,7 @@ export const PROFILE = {
   resumeSummary:
     'I build websites for local businesses that are good at what they do but are losing customers to a search result. I design, write and build every Loomwest site by hand and stay the point of contact afterward. Before a site goes live, I measure it on a phone and check it against a nineteen-point launch checklist.',
   // one more short line from the résumé (Loomwest, first bullet)
-  extraLine: 'Design, copy, build and launch of websites for local businesses at fixed prices, live in three to seven days.',
+  extraLine: 'Design, copy, build and launch of websites for local businesses, quoted on a free call, live in three to seven days.',
   resume: '/andre-costa-resume.pdf',
   resumeFileName: 'Andre-Costa-Resume.pdf',
   // round 5 (Andre 2026-10-07: "something cooler"): the résumé's quote, true to how he works (every site measured on a
@@ -47,8 +47,9 @@ export const PROFILE = {
 export const INTRO_TRANSCRIPT =
   "Hi, I'm Andre. I'm the founder of Loomwest, a web design studio in Gilroy. I build fast, hand-built websites for local businesses, online in days.";
 
-// What the character says, line by line, timed to the silent loop (public/hero/intro.vtt). The hero shows the current
-// line in a speech bubble; the audio was taken out 2026-10-23 at Andre's ask.
+// What the character says, line by line, timed to the loop (public/hero/intro.vtt). The hero shows the current line in
+// a speech bubble (since 2026-10-23); the voice came back 2026-10-30 (Andre: "speaks on first tap"): the loop stays
+// muted until the visitor's first click, tap or key press, then speaks once, and "Hear it again" replays it.
 export const INTRO_CUES: { start: number; text: string }[] = [
   { start: 0, text: "Hi, I'm Andre." },
   { start: 1.42, text: "I'm the founder of Loomwest, a web design studio in Gilroy." },
@@ -83,7 +84,7 @@ export const QUICK_FACTS: { label: string; value: string; href?: string }[] = [
   { label: 'Location', value: 'Gilroy, California' },
   { label: 'Now', value: 'Founder and designer, Loomwest' },
   { label: 'Work', value: 'Seven client sites live, two more in client review' },
-  { label: 'Turnaround', value: 'Live in three to seven days, at a fixed price' },
+  { label: 'Turnaround', value: 'Live in three to seven days, quoted on a free call' },
   { label: 'Email', value: 'andre@loomwest.com', href: 'mailto:andre@loomwest.com' },
   { label: 'Phone', value: '(669) 500-6385', href: 'tel:+16695006385' },
 ];
@@ -190,13 +191,16 @@ export const PATH: PathStop[] = [
   { date: 'Oct 2, 2026', kind: 'Launch', title: 'Pastelaria Adega', place: 'San Jose · pasteladega.com', detail: 'Bakery, ordering, markets on a map.' },
   { date: 'Oct 5, 2026', kind: 'Launch', title: 'Petiscos by Adega', place: 'San Jose · petiscosadega.com', detail: 'Restaurant, reservations and delivery.' },
   { date: 'Oct 5, 2026', kind: 'Service', title: 'The Content Studio opens', place: 'loomwest.com/content.html', detail: 'Short-form video and local ads for clients, shown with eight motion ads designed, animated and scored in house.' },
+  // Andre's OK 2026-10-30 (his list, the portfolio wording item): the two October example-site milestones
+  { date: 'Oct 12, 2026', kind: 'Studio', title: 'Five new example sites', place: 'loomwest.com/work.html', detail: 'Endocarb Materials, Purlin & Stone, Tafoni, Uvas Auto Works and Toyon Counseling: a battery-materials maker, a design-build studio, a trail store, an auto repair shop and a counseling practice, all fictional, each on its own address.' },
+  { date: 'Oct 13, 2026', kind: 'Studio', title: 'Pantally, the first Signature build', place: 'loomwest.com/work.html', detail: "A fictional food-waste scanner maker built to Loomwest's premium Signature standard, with a sample scan you can run, a service clock and a heat-lamp cursor." },
   { date: 'Oct 23, 2026', kind: 'Launch', title: 'Dreamland Gardens', place: 'Claymont, Delaware · dreamlandgardens.com', detail: 'A homepage redesign for an online garden and outdoor store on Shopify.' },
 ];
 
 export const PATH_NEXT = {
   title: 'Next: your',
   accent: 'business?',
-  line: 'Websites for local businesses at fixed prices, live in three to seven days.',
+  line: 'Websites for local businesses, quoted on a free call, live in three to seven days.',
 };
 
 // ---------------------------------------------------------------- selected work (client websites only)
@@ -544,7 +548,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { value: 50, label: 'Shares', caption: 'Times people sent our Instagram posts and Stories on to someone.', detail: 'As of Sun, Oct 25, 2026', icon: 'share' },
   // weekly numbers: cards end
   { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
-  { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites at fixed prices, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
+  { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites quoted on a free call, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
   { value: 19, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },
   { value: 59, label: 'Report Cards', caption: 'Free reviews of how a business shows up online, each a private page.', detail: 'loomwest.com, since August 2026', icon: 'grade' },
   { value: 67, label: 'Treatments', caption: 'A searchable treatment menu for Soul Beauty Spa.', detail: 'soulbeautyspa.com', icon: 'search' },

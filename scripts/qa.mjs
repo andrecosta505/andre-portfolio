@@ -27,6 +27,12 @@
 // recordings in the first load, then (in view) both silent loops play muted and looped over their stills (the posters),
 // aria-hidden inside a labelled wrapper, wrap past the 3.5 s end, answer 200 as video/mp4 under 2 MB, pause and play from
 // the browser-bar button, pause off screen and resume; on a phone they play; with reduced motion only the stills show.
+// 2026-10-30 (Andre: the voice back, "speaks on first tap", and the easter egg): no sound and nothing from YouTube on
+// load; the first click, tap, key or play press speaks the intro once (unmuted from the loop's start), then the loop is
+// muted again; "Hear it again" queues one pass per press, played back to back (+N on the button); a pass cut off by
+// scrolling picks up at its line; five in line stop the voice and slide in the YouTube player (youtube-nocookie.com,
+// only then) as a labelled modal dialog, focus in and back, Esc, Close and the backdrop close it, it counts five plays
+// (YouTube refuses headless playback, so the plays are driven with its own state events), in place under reduced motion.
 import { chromium } from 'playwright';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { serve } from './serve.mjs';
@@ -42,6 +48,24 @@ const check = (name, ok, detail = '') => {
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  (' + detail + ')' : ''}`);
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// the easter egg's player and everything it pulls in (2026-10-30)
+const YT_HOSTS = /^https:\/\/([a-z0-9-]+\.)*(youtube-nocookie\.com|youtube\.com|ytimg\.com|googlevideo\.com|google\.com|gstatic\.com|googleapis\.com|doubleclick\.net)\//;
+const ytReqs = (rs) => rs.filter((u) => YT_HOSTS.test(u));
+const external = (rs) => rs.filter((u) => /^https?:/.test(u) && !u.startsWith(URL_));
+// the hero voice's state, read from the page (2026-10-30)
+const hv = (page) => page.evaluate(() => {
+  const v = document.querySelector('.hero video');
+  const h = document.querySelector('.hero');
+  const a = document.querySelector('.hero-again');
+  return { paused: v.paused, muted: v.muted, t: +v.currentTime.toFixed(2), voice: h.dataset.voice, passes: +h.dataset.passes, again: !!a,
+    badge: a?.querySelector('b')?.textContent || '', status: document.querySelector('.hero-side [role="status"]')?.textContent || '' };
+});
+const waitVoice = async (page, pred, ms) => {
+  const end = Date.now() + ms;
+  let x;
+  do { x = await hv(page); if (pred(x)) return x; await sleep(100); } while (Date.now() < end);
+  return x;
+};
 const scrollToId = (page, id, extra = 0) =>
   page.evaluate(([i, e]) => window.scrollTo(0, document.getElementById(i).getBoundingClientRect().top + scrollY + e), [id, extra]);
 const angleOf = (t) => {
@@ -57,7 +81,8 @@ async function open(browser, opts = {}) {
   const reqs = [];
   page.on('request', (r) => reqs.push(r.url()));
   // the one expected 404 is our own probe for the retired capstone PDF (round 5), so it is not counted as an error
-  page.on('console', (m) => m.type() === 'error' && !/andre-costa-senior-seminar-2023\.pdf$/.test(m.location()?.url || '') && errors.push(m.text()));
+  // YouTube's own frame (the easter egg, 2026-10-30) logs its own errors; they are not this page's
+  page.on('console', (m) => m.type() === 'error' && !/andre-costa-senior-seminar-2023\.pdf$/.test(m.location()?.url || '') && !YT_HOSTS.test(m.location()?.url || '') && errors.push(m.text()));
   page.on('pageerror', (e) => errors.push(String(e)));
   await page.goto(URL_, { waitUntil: 'networkidle' });
   await sleep(1500);
@@ -69,8 +94,10 @@ async function open(browser, opts = {}) {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
   const { ctx, page, errors, reqs } = await open(browser);
   const caseAtStart = reqs.filter((u) => /\/work\/case-loomwest[^/]*\.mp4/.test(u)).length;
-  const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-play').getAttribute('aria-label'), bubble: document.querySelector('.hero-bubble').textContent }; });
-  check('hero video plays silently (muted, no audio since 2026-10-23) with the speech bubble showing a line', !v0.paused && v0.muted && v0.bubble.length > 5, JSON.stringify(v0));
+  const v0 = await page.evaluate(() => { const v = document.querySelector('.hero video'); return { paused: v.paused, muted: v.muted, loop: v.loop, dur: v.duration, src: v.currentSrc.split('/').pop(), label: document.querySelector('.hero-play').getAttribute('aria-label'), bubble: document.querySelector('.hero-bubble').textContent, again: !!document.querySelector('.hero-again'), voice: document.querySelector('.hero').dataset.voice }; });
+  check('on load the hero plays muted with its speech bubble: no sound before a gesture, even where the browser would allow it; no "Hear it again" yet', !v0.paused && v0.muted && v0.bubble.length > 5 && !v0.again && v0.voice === 'off', JSON.stringify(v0));
+  const ext0 = external(reqs);
+  check('the first load reaches no outside host (nothing from YouTube)', ext0.length === 0, ext0.slice(0, 3).join(' ') || 'none');
   check('hero video is the webm/mp4 loop of about 9.5 s', v0.loop && Math.abs(v0.dur - 9.5) < 0.15, `${v0.src}, ${v0.dur?.toFixed(3)} s`);
   // loops: watch currentTime wrap past the end
   const t1 = await page.evaluate(() => document.querySelector('.hero video').currentTime);
@@ -94,16 +121,40 @@ async function open(browser, opts = {}) {
   await page.evaluate(() => window.scrollTo(0, 0));
   await sleep(900);
   const back = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted }));
-  check('it resumes, still muted, on returning to the hero', !back.paused && back.muted, JSON.stringify(back));
+  check('it resumes, still muted (no gesture yet), on returning to the hero', !back.paused && back.muted, JSON.stringify(back));
   await page.click('.hero-play');
   await sleep(300);
-  const p1 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, label: document.querySelector('.hero-play').getAttribute('aria-label'), icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
-  check('the button (bars) pauses the video and shows the triangle', p1.paused && p1.icon === 'triangle', JSON.stringify(p1));
+  const p1 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, voice: document.querySelector('.hero').dataset.voice, again: !!document.querySelector('.hero-again'), label: document.querySelector('.hero-play').getAttribute('aria-label'), icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
+  check('the button (bars) pauses the video and shows the triangle; a pause press does not start the voice', p1.paused && p1.icon === 'triangle' && p1.muted && p1.voice === 'off' && !p1.again, JSON.stringify(p1));
   await page.screenshot({ path: `${SHOTS}/qa-hero-paused.png` });
   await page.click('.hero-play');
   await sleep(400);
-  const p2 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
-  check('the button (triangle) plays it again, muted, and shows the bars', !p2.paused && p2.muted && p2.icon === 'bars', JSON.stringify(p2));
+  const p2 = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, t: +document.querySelector('.hero video').currentTime.toFixed(2), voice: document.querySelector('.hero').dataset.voice, again: !!document.querySelector('.hero-again'), icon: document.querySelector('.hero-play svg rect') ? 'bars' : 'triangle' }));
+  check('the button (triangle) plays it again and, as the first play press, speaks the intro (unmuted, from the loop\'s start); "Hear it again" appears', !p2.paused && !p2.muted && p2.icon === 'bars' && p2.t < 1 && p2.voice === 'on' && p2.again, JSON.stringify(p2));
+  // 2026-10-30: the voice speaks once, replays queue, a pass cut off by scrolling picks up at its line (4x speed to save time)
+  await page.evaluate(() => { document.querySelector('.hero video').playbackRate = 4; });
+  const e1 = await waitVoice(page, (x) => x.voice === 'off', 6000);
+  check('the intro speaks once: at the loop\'s wrap it goes back to the muted loop, still playing', e1.voice === 'off' && e1.muted && !e1.paused && e1.passes === 1, JSON.stringify(e1));
+  await page.evaluate(() => { document.querySelector('.hero video').playbackRate = 1; });
+  await page.click('.hero-again');
+  await sleep(2000);
+  const r1 = await hv(page);
+  await scrollToId(page, 'about');
+  await sleep(900);
+  const r2 = await hv(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(900);
+  const r3 = await hv(page);
+  check('"Hear it again" replays it with the voice; scrolled away it pauses, and back in view it picks up at the start of its line, still voiced', !r1.muted && r1.voice === 'on' && r1.t > 1.5 && r2.paused && r2.voice === 'on' && !r3.paused && !r3.muted && r3.voice === 'on' && r3.t >= 1.42 && r3.t < 2.6, JSON.stringify({ r1, r2, r3 }));
+  await page.click('.hero-again');
+  await page.click('.hero-again');
+  await sleep(200);
+  const q1 = await hv(page);
+  check('each further press queues one more replay: the button shows +2 and a status line says so to screen readers', q1.badge === '+2' && q1.status === '2 more replays queued' && q1.voice === 'on', JSON.stringify(q1));
+  await page.evaluate(() => { document.querySelector('.hero video').playbackRate = 4; });
+  const q2 = await waitVoice(page, (x) => x.voice === 'off', 12000);
+  check('the queued replays play back to back (three passes), then the loop goes back to silence', q2.voice === 'off' && q2.muted && !q2.paused && q2.passes === q1.passes + 3 && q2.badge === '', JSON.stringify({ before: q1.passes, after: q2 }));
+  await page.evaluate(() => { document.querySelector('.hero video').playbackRate = 1; });
 
   // the ID card: swing by mouse, flip by hover and by keyboard
   await scrollToId(page, 'about');
@@ -317,8 +368,12 @@ async function open(browser, opts = {}) {
     stops: [...document.querySelectorAll('#experience .xp-stop .xp-card')].map((c) => c.querySelector('.xp-year').childNodes[0].textContent.trim() + ' ' + c.querySelector('.xp-title').textContent),
     next: document.querySelector('#experience .xp-next h3')?.textContent,
   }));
-  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens', 'Oct 23, 2026 Dreamland Gardens'];
-  check('Experience is Loomwest\'s thirteen dated milestones (Dreamland Gardens since 2026-10-28), in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
+  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens', 'Oct 12, 2026 Five new example sites', 'Oct 13, 2026 Pantally, the first Signature build', 'Oct 23, 2026 Dreamland Gardens'];
+  check('Experience is Loomwest\'s fifteen dated milestones (Dreamland Gardens since 2026-10-28; Oct 12 and 13 since 2026-10-30), in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
+  // 2026-10-30 (Andre's OK): no price wording; every build is quoted on a call
+  const words = await page.evaluate(() => ({ text: document.body.innerText, desc: document.querySelector('meta[name="description"]')?.content || '' }));
+  const priced = ['fixed price', 'at fixed prices', '$'].filter((w) => words.text.toLowerCase().includes(w) || words.desc.toLowerCase().includes(w));
+  check('no price wording anywhere on the page or in its description ("quoted on a free call" instead of "at fixed prices")', priced.length === 0 && /quoted on a free call/.test(words.desc) && (words.text.match(/quoted on a free call/g) || []).length >= 3, priced.join(', ') || words.desc);
 
   // ---- launch (2026-10-07): indexable, one canonical address, robots.txt allows all and names the sitemap
   const seo = await page.evaluate(async () => {
@@ -598,6 +653,7 @@ async function open(browser, opts = {}) {
     const o = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
     check(`no horizontal overflow at ${w}px`, o[0] === o[1], `${o[0]} vs ${o[1]}`);
   }
+  check('the whole desktop run (the voice and its replays included) requested nothing from YouTube', ytReqs(reqs).length === 0, ytReqs(reqs).slice(0, 3).join(' ') || 'none');
   check('no console errors on desktop', errors.length === 0, errors.join(' | '));
   await ctx.close();
   await browser.close();
@@ -607,10 +663,20 @@ async function open(browser, opts = {}) {
 {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=document-user-activation-required'] });
   const { ctx, page, errors } = await open(browser);
-  const b = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, bubble: document.querySelector('.hero-bubble').textContent }));
-  check('under a strict autoplay policy the silent video still plays with its bubble', !b.paused && b.muted && b.bubble.length > 5, JSON.stringify(b));
+  const b = await page.evaluate(() => ({ paused: document.querySelector('.hero video').paused, muted: document.querySelector('.hero video').muted, bubble: document.querySelector('.hero-bubble').textContent, again: !!document.querySelector('.hero-again') }));
+  check('under a strict autoplay policy the muted loop still plays with its bubble, with no voice before a gesture', !b.paused && b.muted && b.bubble.length > 5 && !b.again, JSON.stringify(b));
+  await page.mouse.click(700, 300);
+  await sleep(600);
+  const u = await hv(page);
+  check('the first click anywhere on the page speaks the intro (unmuted, from the loop\'s start) and shows "Hear it again"', !u.paused && !u.muted && u.t < 1.3 && u.voice === 'on' && u.again, JSON.stringify(u));
   check('no console errors under a strict autoplay policy', errors.length === 0, errors.join(' | '));
   await ctx.close();
+  const k = await open(browser);
+  await k.page.keyboard.press('Tab');
+  await sleep(600);
+  const kv = await hv(k.page);
+  check('or the first key press (Tab) does', !kv.paused && !kv.muted && kv.voice === 'on' && kv.again, JSON.stringify(kv));
+  await k.ctx.close();
   await browser.close();
 }
 
@@ -621,6 +687,17 @@ async function open(browser, opts = {}) {
     const { ctx, page, errors } = await open(browser, { w, h: 844, mobile: true });
     const o = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
     check(`no horizontal overflow at ${w}px`, o[0] === o[1] && o[1] === w, `${o[0]} vs ${o[1]}`);
+    // 2026-10-30: a tap speaks the intro; Hear it again fits beside the play button
+    await page.tap('.hero-h');
+    await sleep(700);
+    const pv = await page.evaluate(() => {
+      const v = document.querySelector('.hero video');
+      const a = document.querySelector('.hero-again')?.getBoundingClientRect();
+      const pl = document.querySelector('.hero-play').getBoundingClientRect();
+      return { muted: v.muted, paused: v.paused, voice: document.querySelector('.hero').dataset.voice, again: a ? [Math.round(a.left), Math.round(a.right), Math.round(a.height)] : null, play: [Math.round(pl.left), Math.round(pl.right)], overflow: [document.documentElement.scrollWidth, innerWidth] };
+    });
+    check(`on a phone at ${w}px a tap speaks the intro, and "Hear it again" (44 px tall) fits beside the play button`, !pv.muted && !pv.paused && pv.voice === 'on' && pv.again && pv.again[0] >= 0 && pv.again[1] <= pv.play[0] && pv.again[2] >= 44 && pv.overflow[0] === pv.overflow[1], JSON.stringify(pv));
+    if (w === 390) await page.screenshot({ path: `${SHOTS}/qa-phone-hero-voice.png` });
     if (w === 390) {
       await scrollToId(page, 'about', 500);
       await sleep(1200);
@@ -761,8 +838,111 @@ async function open(browser, opts = {}) {
   check('reduced motion: the case study shows only its stills (no recording fetched or played, no button)', rc.v.length === 2 && rc.v.every((x) => !x[0] && x[1] && x[2] === 'none') && rc.imgs.every(Boolean) && !rc.btn, JSON.stringify(rc));
   const spin = await page.evaluate(() => { const c = getComputedStyle(document.querySelector('.ct-badge svg')); return { dur: c.animationDuration, count: c.animationIterationCount }; });
   check('reduced motion: the "Say hello" badge does not spin', parseFloat(spin.dur) < 0.01 && spin.count === '1', JSON.stringify(spin));
+  // 2026-10-30: nothing speaks on its own; the play button plays the intro with its voice; the easter egg shows in place
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(600);
+  await page.click('.hero-play');
+  await sleep(500);
+  const rv = await hv(page);
+  check('reduced motion: the play button plays the intro with its voice', !rv.paused && !rv.muted && rv.voice === 'on' && rv.again, JSON.stringify(rv));
+  for (let i = 0; i < 5; i++) await page.click('.hero-again');
+  await sleep(80);
+  const rr = await page.evaluate(() => { const p = document.querySelector('.rr-panel'); if (!p) return null; const r = p.getBoundingClientRect(); const cs = getComputedStyle(p); return { center: Math.round(r.left + r.width / 2), mid: Math.round(innerWidth / 2), tf: cs.transform, dur: cs.transitionDuration }; });
+  check('reduced motion: the easter egg shows in place, with no slide', rr && Math.abs(rr.center - rr.mid) <= 2 && rr.tf === 'none' && parseFloat(rr.dur) < 0.01, JSON.stringify(rr));
+  await sleep(300);
+  await page.keyboard.press('Escape');
+  await sleep(300);
+  const rgone = await page.evaluate(() => ({ open: !!document.querySelector('.rr'), focus: document.activeElement?.className }));
+  check('reduced motion: Esc closes it and focus returns to "Hear it again"', !rgone.open && /hero-again/.test(rgone.focus || ''), JSON.stringify(rgone));
   check('no console errors with reduced motion', errors.length === 0, errors.join(' | '));
   await ctx.close();
+  await browser.close();
+}
+
+// ---------------------------------------------------------------- 5. the easter egg (2026-10-30): five replays in line
+{
+  const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
+  const { ctx, page, errors, reqs } = await open(browser);
+  await page.mouse.click(700, 300);
+  await sleep(500);
+  for (let i = 0; i < 4; i++) await page.click('.hero-again');
+  const pre = await page.evaluate(() => ({ badge: document.querySelector('.hero-again b')?.textContent, voice: document.querySelector('.hero').dataset.voice, dialog: !!document.querySelector('.rr') }));
+  check('egg: four presses during the intro queue four replays (+4); no player and nothing from YouTube yet', pre.badge === '+4' && pre.voice === 'on' && !pre.dialog && ytReqs(reqs).length === 0, JSON.stringify(pre));
+  const before = reqs.length;
+  await page.click('.hero-again');
+  const s0 = await page.evaluate(() => { const r = document.querySelector('.rr-panel').getBoundingClientRect(); return { left: Math.round(r.left), w: innerWidth }; });
+  await sleep(300);
+  await page.screenshot({ path: `${SHOTS}/qa-egg-sliding.png` });
+  await sleep(1200);
+  await page.screenshot({ path: `${SHOTS}/qa-egg-open.png` });
+  const s1 = await page.evaluate(() => {
+    const p = document.querySelector('.rr-panel');
+    const r = p.getBoundingClientRect();
+    const cs = getComputedStyle(p);
+    const f = p.querySelector('iframe');
+    const v = document.querySelector('.hero video');
+    return { role: p.getAttribute('role'), modal: p.getAttribute('aria-modal'), title: document.getElementById(p.getAttribute('aria-labelledby'))?.textContent, center: Math.round(r.left + r.width / 2), mid: Math.round(innerWidth / 2),
+      dur: cs.transitionDuration, ease: cs.transitionTimingFunction, src: f.getAttribute('src'), allow: f.getAttribute('allow'), ftitle: f.getAttribute('title'), focus: document.activeElement?.className,
+      lock: document.documentElement.style.overflow, muted: v.muted, voice: document.querySelector('.hero').dataset.voice,
+      radius: [cs.borderRadius, getComputedStyle(p.querySelector('.rr-frame')).borderRadius, getComputedStyle(p.querySelector('.rr-close')).borderRadius], closeH: Math.round(p.querySelector('.rr-close').getBoundingClientRect().height) };
+  });
+  check('egg: the fifth press stops the voice and slides the player in from the right edge to the middle (1.1 s, easing out)', s0.left > s0.w * 0.6 && Math.abs(s1.center - s1.mid) <= 2 && /1\.1s/.test(s1.dur) && s1.muted && s1.voice === 'off', JSON.stringify({ s0, center: s1.center, mid: s1.mid, dur: s1.dur, ease: s1.ease }));
+  check('egg: a labelled modal dialog, focus moved to Close, the page locked; 10 / 8 / 8 px corners and a 44 px Close', s1.role === 'dialog' && s1.modal === 'true' && s1.title === 'Never Gonna Give You Up' && /rr-close/.test(s1.focus || '') && s1.lock === 'hidden' && s1.radius.join() === '10px,8px,8px' && s1.closeH >= 44, JSON.stringify(s1));
+  const yAfter = ytReqs(reqs.slice(before));
+  const hosts = [...new Set(yAfter.map((u) => new URL(u).host))];
+  check('egg: the official video from youtube-nocookie.com, requested only now, with the API on and autoplay allowed', /^https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ\?enablejsapi=1&autoplay=1/.test(s1.src) && /autoplay/.test(s1.allow) && yAfter.length > 0 && /^https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ/.test(yAfter[0]), `first ${yAfter[0]}; hosts ${hosts.join(', ')}`);
+  let yt = 'loading';
+  for (let i = 0; i < 60 && yt === 'loading'; i++) { await sleep(250); yt = await page.evaluate(() => document.querySelector('.rr-panel').dataset.yt); }
+  check('egg: the player answers the API handshake (onReady); headless Chrome is refused playback by YouTube, a real browser plays it', yt !== 'loading', yt);
+  const fire = (states) => page.evaluate((st) => {
+    const f = document.querySelector('.rr-panel iframe');
+    for (const x of st) window.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ event: 'onStateChange', info: x }), origin: 'https://www.youtube-nocookie.com', source: f.contentWindow }));
+  }, states);
+  const counts = [];
+  for (let n = 1; n <= 5; n++) {
+    await fire([1, 0]);
+    await sleep(150);
+    counts.push(await page.evaluate(() => [document.querySelector('.rr-panel').dataset.played, document.querySelector('.rr-status span').textContent]));
+  }
+  check('egg: it plays as many times as were queued, each end starting it again until the fifth (driven with YouTube\'s state events)', JSON.stringify(counts.map((c) => c[0])) === '["1","2","3","4","5"]' && counts[0][1] === 'Play 2 of 5.' && counts[3][1] === 'Play 5 of 5.' && counts[4][1] === 'Played 5 of 5.', JSON.stringify(counts));
+  await page.focus('.rr-close');
+  await page.keyboard.press('Shift+Tab');
+  const t1 = await page.evaluate(() => document.activeElement?.tagName);
+  await page.evaluate(() => document.querySelector('.rr-panel > span[tabindex="0"]').focus());
+  const t2 = await page.evaluate(() => document.activeElement?.className);
+  check('egg: focus stays in the dialog (Shift+Tab from Close goes to the player; Tab out of the player comes back to Close)', t1 === 'IFRAME' && /rr-close/.test(t2 || ''), `${t1} / ${t2}`);
+  await page.keyboard.press('Escape');
+  await sleep(300);
+  const c1 = await page.evaluate(() => ({ open: !!document.querySelector('.rr'), iframe: !!document.querySelector('iframe'), focus: document.activeElement?.className, lock: document.documentElement.style.overflow, voice: document.querySelector('.hero').dataset.voice, muted: document.querySelector('.hero video').muted }));
+  check('egg: Esc closes it (the player is removed), unlocks the page and returns focus to "Hear it again"; the hero stays muted', !c1.open && !c1.iframe && /hero-again/.test(c1.focus || '') && c1.lock === '' && c1.voice === 'off' && c1.muted, JSON.stringify(c1));
+  for (let i = 0; i < 5; i++) await page.click('.hero-again');
+  await sleep(1300);
+  const reopened = await page.evaluate(() => !!document.querySelector('.rr-panel'));
+  await page.click('.rr-close');
+  await sleep(300);
+  const c2 = await page.evaluate(() => ({ open: !!document.querySelector('.rr'), focus: document.activeElement?.className }));
+  for (let i = 0; i < 5; i++) await page.click('.hero-again');
+  await sleep(1300);
+  await page.mouse.click(12, 450);
+  await sleep(300);
+  const c3 = await page.evaluate(() => ({ open: !!document.querySelector('.rr'), lock: document.documentElement.style.overflow }));
+  check('egg: five more presses open it again; the Close button and a click on the backdrop each close it', reopened && !c2.open && /hero-again/.test(c2.focus || '') && !c3.open && c3.lock === '', JSON.stringify({ reopened, c2, c3 }));
+  check('egg: no console errors from this page', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+  // the same on a phone: it fits
+  const m = await open(browser, { w: 390, h: 844, mobile: true });
+  await m.page.tap('.hero-h');
+  await sleep(600);
+  for (let i = 0; i < 5; i++) await m.page.tap('.hero-again');
+  await sleep(1500);
+  const mp = await m.page.evaluate(() => { const r = document.querySelector('.rr-panel').getBoundingClientRect(); const f = document.querySelector('.rr-frame').getBoundingClientRect(); return { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top), bottom: Math.round(r.bottom), frame: [Math.round(f.width), Math.round(f.height)], w: innerWidth, h: innerHeight, overflow: document.documentElement.scrollWidth }; });
+  check('egg on a phone (390 px): the player fits the screen, 16:9, no overflow', mp.left >= 0 && mp.right <= mp.w && mp.top >= 0 && mp.bottom <= mp.h && Math.abs(mp.frame[0] / mp.frame[1] - 16 / 9) < 0.02 && mp.overflow === mp.w, JSON.stringify(mp));
+  await m.page.screenshot({ path: `${SHOTS}/qa-phone-egg.png` });
+  await m.page.tap('.rr-close');
+  await sleep(300);
+  check('egg on a phone: Close by tap', !(await m.page.evaluate(() => !!document.querySelector('.rr'))));
+  check('egg on a phone: no console errors from this page', m.errors.length === 0, m.errors.join(' | '));
+  await m.ctx.close();
   await browser.close();
 }
 
