@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
+import { flushSync } from 'react-dom';
 import { INTRO_CUES, INTRO_TRANSCRIPT, PROFILE } from '@/lib/data';
 import { prefersReducedMotion } from '@/lib/hooks';
 import { scrollToTarget } from '@/lib/scroll';
@@ -312,7 +313,7 @@ export default function Hero() {
       const n = s.replays;
       stopVoice();
       s.egg = true;
-      setEgg(n);
+      flushSync(() => setEgg(n)); // the player's frame is created inside this press, not after it
       return;
     }
     if (!s.speaking) {

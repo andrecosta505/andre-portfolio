@@ -37,7 +37,7 @@ const css = `
 .ln-row:hover .ln-a i,.ln-row:focus-visible .ln-a i,.ln-row[aria-expanded="true"] .ln-a i{background:#fff;color:var(--ink);box-shadow:none;transform:translateX(4px)}
 
 /* the drawer: a backdrop and a panel from the right edge */
-.ld{position:fixed;inset:0;z-index:80;visibility:hidden;transition:visibility 0s linear .7s}
+.ld{position:fixed;inset:0;z-index:69;visibility:hidden;transition:visibility 0s linear .7s}
 .ld.is-open{visibility:visible;transition:visibility 0s}
 .ld-backdrop{position:absolute;inset:0;background:rgba(13,13,13,.34);opacity:0;transition:opacity .6s var(--ease)}
 .ld.is-open .ld-backdrop{opacity:1}

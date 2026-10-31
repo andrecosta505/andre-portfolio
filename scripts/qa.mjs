@@ -33,6 +33,11 @@
 // scrolling picks up at its line; five in line stop the voice and slide in the YouTube player (youtube-nocookie.com,
 // only then) as a labelled modal dialog, focus in and back, Esc, Close and the backdrop close it, it counts five plays
 // (YouTube refuses headless playback, so the plays are driven with its own state events), in place under reduced motion.
+// 2026-10-31 (Andre: "should play the Rick roll instantly not just open up the viewer"): a stand-in player that keeps YouTube's
+// message protocol, served at the player's own address, walks every path in headless Chrome: a browser that allows sound, one that
+// refuses sound but allows a muted start, one that refuses even that, the "Turn sound on" button, and the five plays with sound.
+// Real playback is proved separately in a windowed Chrome, where YouTube plays (the method is in the RUNBOOK). The reticle shows
+// over the Always learning drawer (the drawer sat above it, with the native cursor hidden, until 2026-10-31).
 import { chromium } from 'playwright';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { serve } from './serve.mjs';
@@ -943,6 +948,139 @@ async function open(browser, opts = {}) {
   check('egg on a phone: Close by tap', !(await m.page.evaluate(() => !!document.querySelector('.rr'))));
   check('egg on a phone: no console errors from this page', m.errors.length === 0, m.errors.join(' | '));
   await m.ctx.close();
+  await browser.close();
+}
+
+// ---------------------------------------------------------------- 6. the egg's start, every path (2026-10-31)
+{
+  // policy: allow (a start with sound works), refuse (only a muted start works; unmuting without a press pauses it, as a browser does),
+  // dead (no start at all), press (like refuse, but the visitor's "Turn sound on" press reaches the player)
+  const FAKE = (policy) => `<!doctype html><title>stand-in player</title><body>stand-in<script>
+    const q = new URLSearchParams(location.search); const policy = ${JSON.stringify(policy)};
+    let state = -1, muted = q.get('mute') === '1', listening = false; window.log = []; window.tapped = false;
+    const out = (o) => parent.postMessage(JSON.stringify({ ...o, id: 1, channel: 'widget' }), '*');
+    const info = () => out({ event: 'infoDelivery', info: { playerState: state, muted, volume: 100, currentTime: 0 } });
+    const set = (x) => { if (x !== state) { state = x; if (listening) { out({ event: 'onStateChange', info: x }); info(); } } };
+    const allowed = () => policy === 'allow' || (policy !== 'dead' && muted);
+    const play = () => { if (allowed()) { setTimeout(() => set(1), 60); } };
+    window.end = () => { set(0); };
+    addEventListener('message', (e) => {
+      const d = JSON.parse(e.data);
+      if (d.event === 'listening' && !listening) { listening = true; out({ event: 'initialDelivery', info: { playerState: state, muted, volume: 100 } }); out({ event: 'onReady' }); if (q.get('autoplay') === '1') play(); return; }
+      if (d.event !== 'command') return;
+      window.log.push(d.func);
+      if (d.func === 'playVideo') play();
+      if (d.func === 'mute') { muted = true; info(); }
+      if (d.func === 'unMute') {
+        if (policy === 'allow' || (policy === 'press' && navigator.userActivation.isActive) || window.tapped) { muted = false; info(); }
+        else { muted = false; info(); set(2); }   // what a browser does to a muted video unmuted without a press
+      }
+    });
+  </script>`;
+  const browser = await chromium.launch({ executablePath: CHROME, headless: true });
+  const start = async (policy, opts = {}) => {
+    const o = await (async () => {
+      const ctx = await browser.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, isMobile: !!opts.mobile, hasTouch: !!opts.mobile, ...(opts.ua ? { userAgent: opts.ua } : {}) });
+      const srcs = [];
+      await ctx.route('https://www.youtube-nocookie.com/embed/**', (r) => { srcs.push(r.request().url()); return r.fulfill({ status: 200, contentType: 'text/html', body: FAKE(policy) }); });
+      const page = await ctx.newPage();
+      const errors = [];
+      page.on('pageerror', (e) => errors.push(String(e)));
+      await page.goto(URL_, { waitUntil: 'networkidle' });
+      await sleep(800);
+      return { ctx, page, errors, srcs };
+    })();
+    const press = (sel) => (opts.mobile ? o.page.tap(sel) : o.page.click(sel));
+    if (opts.mobile) await o.page.tap('.hero-h'); else await o.page.mouse.click(700, 300);
+    await sleep(500);
+    for (let i = 0; i < 4; i++) await press('.hero-again');
+    // React handles the press at its root, so a listener on window runs after it, still inside the same press
+    await o.page.evaluate(() => window.addEventListener(matchMedia('(hover: none)').matches ? 'touchend' : 'click', () => { window.__madeInPress = !!document.querySelector('.rr-frame iframe'); }));
+    const t0 = Date.now();
+    await press('.hero-again');
+    const yt = async () => o.page.evaluate(() => { const p = document.querySelector('.rr-panel'); return p ? { yt: p.dataset.yt, tap: document.querySelector('.rr-tap')?.textContent.trim() || '', status: document.querySelector('.rr-status')?.textContent || '' } : null; });
+    const until = async (fn, ms = 6000) => { const end = Date.now() + ms; let v = await yt(); while (Date.now() < end && !fn(v)) { await sleep(60); v = await yt(); } return { ...v, ms: Date.now() - t0 }; };
+    const player = () => o.page.frames().find((f) => /youtube-nocookie/.test(f.url()));
+    return { ...o, press, until, player, t0 };
+  };
+
+  // a browser that allows it: playing with sound, no button, nothing muted
+  let t = await start('allow');
+  let r = await t.until((v) => v && v.yt === 'playing');
+  const madeInPress = await t.page.evaluate(() => window.__madeInPress);
+  let log = await t.player().evaluate(() => window.log);
+  check('egg start, browser allows sound: playing with sound at once, no button, nothing muted, the frame made inside the press', r.yt === 'playing' && !r.tap && !log.includes('mute') && r.ms < 2000 && !t.srcs[0].includes('mute=1') && madeInPress === true, JSON.stringify({ ...r, log, madeInPress }));
+  // the five plays with sound still work: each end starts it again, to the fifth
+  const ends = [];
+  for (let i = 0; i < 5; i++) { await t.player().evaluate(() => window.end()); await sleep(200); ends.push(await t.page.evaluate(() => [document.querySelector('.rr-panel').dataset.played, document.querySelector('.rr-status span').textContent])); }
+  log = await t.player().evaluate(() => window.log);
+  check('egg start: the five plays still count up, each end starts it again', JSON.stringify(ends.map((x) => x[0])) === '["1","2","3","4","5"]' && ends[4][1] === 'Played 5 of 5.' && log.filter((x) => x === 'seekTo').length === 4, JSON.stringify({ ends, log }));
+  check('egg start: no console errors (allowed)', t.errors.length === 0, t.errors.join(' | '));
+  await t.ctx.close();
+
+  // a browser that refuses sound: it moves, muted, within about 2 seconds, after one try at the sound; the button is there and the viewer is never dead
+  t = await start('refuse');
+  r = await t.until((v) => v && v.yt === 'muted' && v.tap);
+  await sleep(1200); // past the one try at the sound
+  let v2 = await t.until((v) => v && v.yt === 'muted', 500);
+  let pstate = await t.player().evaluate(() => ({ log: window.log }));
+  check('egg start, browser refuses sound: playing muted within 2.5 s, one try at the sound, then muted again, with a "Turn sound on" button', r.ms < 2500 && v2.yt === 'muted' && v2.tap === 'Turn sound on' && /without sound/.test(v2.status) && pstate.log.includes('unMute') && pstate.log.lastIndexOf('mute') > pstate.log.indexOf('unMute'), JSON.stringify({ r, v2, log: pstate.log }));
+  // the button in a browser that does not carry the press into the frame: it stays moving and says what to do
+  await t.press('.rr-tap');
+  await sleep(1300);
+  v2 = await t.until((v) => v && /speaker on the video/.test(v.status), 1000);
+  check('egg start: if the button cannot reach the player, the video keeps moving and the line says to tap its speaker', v2.yt === 'muted' && !!v2.tap, JSON.stringify(v2));
+  const focusable = await t.page.evaluate(() => { const b = document.querySelector('.rr-tap'); return { h: Math.round(b.getBoundingClientRect().height), radius: getComputedStyle(b).borderRadius }; });
+  check('egg start: the button is 44 px tall with 8 px corners', focusable.h >= 44 && focusable.radius === '8px', JSON.stringify(focusable));
+  // Shift+Tab from Close lands on the button, then the player's frame is next in line
+  await t.page.focus('.rr-close');
+  await t.page.keyboard.press('Shift+Tab');
+  const onTap = await t.page.evaluate(() => document.activeElement?.className || '');
+  check('egg start: Tab stays in the dialog with the button up (Shift+Tab from Close reaches it)', /rr-tap/.test(onTap), onTap);
+  await t.page.screenshot({ path: `${SHOTS}/qa-egg-muted.png` });
+  check('egg start: no console errors (refused)', t.errors.length === 0, t.errors.join(' | '));
+  await t.ctx.close();
+
+  // the visitor's press does reach the player (Safari carries a press through postMessage): sound on, the button gone, focus on Close
+  t = await start('press');
+  r = await t.until((v) => v && v.yt === 'muted' && v.tap);
+  await sleep(1200);
+  await t.player().evaluate(() => { window.tapped = true; });
+  await t.press('.rr-tap');
+  await sleep(1100);
+  v2 = await t.until((v) => v && v.yt === 'playing', 1500);
+  const foc = await t.page.evaluate(() => document.activeElement?.className || '');
+  check('egg start: a press that reaches the player turns the sound on, the button goes and focus moves to Close', v2.yt === 'playing' && !v2.tap && /rr-close/.test(foc), JSON.stringify({ v2, foc }));
+  await t.ctx.close();
+
+  // nothing starts at all: after the documented muted reload, the button plays it; never a silent dead viewer
+  t = await start('dead');
+  r = await t.until((v) => v && v.yt === 'blocked', 7000);
+  check('egg start, no start allowed at all: it tries the documented muted start, then shows "Play with sound"', r.yt === 'blocked' && r.tap === 'Play with sound' && t.srcs.length === 2 && t.srcs[1].includes('&mute=1'), JSON.stringify({ r, srcs: t.srcs.map((u) => u.slice(50, 90)) }));
+  await t.ctx.close();
+
+  // an iPhone's address line: it starts muted from the first frame, with no doomed try, and the button is up at once
+  const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+  t = await start('refuse', { w: 390, h: 844, mobile: true, ua: IPHONE });
+  r = await t.until((v) => v && v.yt === 'muted' && v.tap, 3000);
+  log = await t.player().evaluate(() => window.log);
+  check('egg start, an iPhone (stand-in player, not a real iPhone): muted from the first frame, the button at once, no try at the sound without a press', r.yt === 'muted' && r.ms < 2000 && t.srcs[0].includes('&mute=1') && !log.includes('unMute'), JSON.stringify({ r, log }));
+  const fits = await t.page.evaluate(() => { const b = document.querySelector('.rr-tap').getBoundingClientRect(); const p = document.querySelector('.rr-panel').getBoundingClientRect(); return { b: Math.round(b.bottom), p: Math.round(p.bottom), inner: innerHeight, over: document.documentElement.scrollWidth }; });
+  check('egg start on a phone: the button fits inside the panel and the screen', fits.b <= fits.p && fits.p <= fits.inner && fits.over <= 390, JSON.stringify(fits));
+  await sleep(1300); // past the slide
+  await t.page.screenshot({ path: `${SHOTS}/qa-phone-egg-muted.png` });
+  await t.ctx.close();
+
+  // the reticle over the Always learning drawer
+  const { ctx, page } = await open(browser);
+  await page.evaluate(() => document.querySelector('#learning').scrollIntoView({ block: 'start' }));
+  await sleep(900);
+  await page.mouse.move(500, 300);
+  await page.locator('.ln-row').first().click();
+  await sleep(900);
+  const z = await page.evaluate(() => ({ ret: +getComputedStyle(document.querySelector('.ret')).zIndex, ld: +getComputedStyle(document.querySelector('.ld')).zIndex, on: document.querySelector('.ret').classList.contains('on'), open: document.querySelector('.ld').classList.contains('is-open') }));
+  check('cursor: the reticle sits above the Always learning drawer, so the pointer never disappears over it', z.open && z.on && z.ret > z.ld, JSON.stringify(z));
+  await ctx.close();
   await browser.close();
 }
 
