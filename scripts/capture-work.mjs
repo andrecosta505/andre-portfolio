@@ -18,6 +18,17 @@ const CLIENTS = [
   ['southcountywindowcleaning', 'https://southcountywindowcleaning.com/'],
   ['ninestardrywall', 'https://ninestardrywall.com/'],
   ['fariacpas', 'https://fariacpas.com/'],
+  // Lujan & Lee (2026-11-09, launched 2026-11-03). PRIVACY (Andre 2026-11-09, "Ship without crew faces"): the crew in the
+  // site's photos are Trilogy Adult Services participants, so the shot is the estimate request, not the first screen:
+  // the ready check scrolls the gold estimate tile up under the header and only passes once no crew- photo is on screen
+  ['lujanlee', 'https://lujanlee.com/', 0, null, `(() => { const t = document.querySelector('#estimate .t-cta'); if (!t) return false;
+    const h = document.querySelector('header'); const hh = h ? h.getBoundingClientRect().height : 0;
+    const y = Math.round(t.getBoundingClientRect().top + scrollY - hh);
+    if (Math.abs(scrollY - y) > 2) { window.scrollTo({ top: y, behavior: 'instant' }); window.__lt = performance.now(); return false; }
+    const on = (i) => { const r = i.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 1; };
+    const imgs = [...document.images];
+    return !imgs.some((i) => /crew-/.test(i.currentSrc || i.src) && on(i)) && imgs.filter(on).every((i) => i.complete)
+      && performance.now() > 5000 && performance.now() - (window.__lt || 0) > 1500; })()`],
   // Dreamland Gardens (2026-10-28): Loomwest's homepage redesign on the store's own Shopify theme, live 2026-10-23. The
   // ready check takes the store's announcement bar out first (its own promotion, not Loomwest's work, and on 10/28 still
   // saying a sale "Ends October 26"; loomwest.com's tour hides it the same way), then shoots once at least 6 s have passed

@@ -8,7 +8,7 @@
 // drawer (open by click, Enter and tap; Tab stays inside; Esc, the backdrop and Close shut it; focus returns to the
 // row; the page locks and unlocks; the official links).
 // Round 4 (2026-10-07): the Work switch (tablist, aria-selected, roving tabindex, click, arrow keys, Home and End, a
-// visible focus ring, tap on a phone; each tab's own panels: 8 client panels (7 sites and, since 2026-10-28, the Dreamland Gardens homepage), 20 example sites each tagged "Example site,
+// visible focus ring, tap on a phone; each tab's own panels: 9 client panels (8 sites, Lujan & Lee since 2026-11-09, and, since 2026-10-28, the Dreamland Gardens homepage), 20 example sites each tagged "Example site,
 // fictional business" with its style, a "View example" link and both screenshots answering 200; every panel opens),
 // the capstone PDF served from this site (200, application/pdf, %PDF), and the "Say hello" badge (a button that opens
 // its choices: the Email, Call, Text and Start a project links; focus moves in; Esc, a click or tap outside and Tab out
@@ -290,7 +290,7 @@ async function open(browser, opts = {}) {
     return { ids, tags, panels };
   });
   check('sections run Work, Always learning, the case study, Experience and the tags read 01 to 08', order.ids.join() === 'top,about,skills,work,learning,case-study,experience,achievements,contact' && order.tags.join() === '01,02,03,04,05,06,07,08', `${order.ids.join(' > ')} | ${order.tags.join(' ')}`);
-  check('the "Live client sites" tab holds the seven client sites and the Dreamland Gardens homepage only (no capstone, no examples)', order.panels.length === 8 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
+  check('the "Live client sites" tab holds the eight client sites and the Dreamland Gardens homepage only (no capstone, no examples)', order.panels.length === 9 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
   // ---- round 5 (2026-10-07): web design only
   const web = await page.evaluate(async () => {
     const text = document.body.innerText;
@@ -437,7 +437,7 @@ async function open(browser, opts = {}) {
     for (const s of srcs) { const r = await fetch(s, { cache: 'no-store' }); if (r.status !== 200 || !/webp/.test(r.headers.get('content-type') || '')) bad.push(`${s} ${r.status}`); }
     return { n: srcs.length, bad };
   });
-  check('every Work screenshot answers 200 (8 client and 20 example sites, desktop and phone)', shots.n === 56 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
+  check('every Work screenshot answers 200 (9 client and 20 example sites, desktop and phone)', shots.n === 58 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
   const opened = [];
   for (let i = 0; i < 19; i++) {
     // stacked, a click on an open panel folds it, and the first starts open: click only the closed ones
