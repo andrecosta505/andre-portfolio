@@ -83,7 +83,7 @@ export const SECTION_TAGS = {
 export const QUICK_FACTS: { label: string; value: string; href?: string }[] = [
   { label: 'Location', value: 'Gilroy, California' },
   { label: 'Now', value: 'Founder and designer, Loomwest' },
-  { label: 'Work', value: 'Seven client sites live, two more in client review' },
+  { label: 'Work', value: 'Eight client sites live, one more in client review' },
   { label: 'Turnaround', value: 'Live in three to seven days, quoted on a free call' },
   { label: 'Email', value: 'andre@loomwest.com', href: 'mailto:andre@loomwest.com' },
   { label: 'Phone', value: '(669) 500-6385', href: 'tel:+16695006385' },
@@ -99,7 +99,7 @@ export const ID_CARD = {
   strap: 'ANDRE COSTA · FOUNDER AND DESIGNER · LOOMWEST · ',
   back: [
     'Founder and designer, Loomwest',
-    'Eight sites live, two more in client review',
+    'Nine sites live, one more in client review',
     'Twenty example sites, twenty styles',
     '59 Website Report Cards published',
     'Live in three to seven days',
@@ -128,7 +128,7 @@ export const SKILL_GROUPS: { family: SkillFamily; skills: Skill[] }[] = [
   {
     family: 'Web',
     skills: [
-      { n: 1, symbol: 'Wd', name: 'Web design', family: 'Web', logo: 'webdesign', usedIn: ['Loomwest', 'Seven live client sites'] },
+      { n: 1, symbol: 'Wd', name: 'Web design', family: 'Web', logo: 'webdesign', usedIn: ['Loomwest', 'Eight live client sites'] },
       { n: 2, symbol: 'Ht', name: 'HTML', family: 'Web', logo: 'html', usedIn: ['Loomwest: every site built by hand'] },
       { n: 3, symbol: 'Cs', name: 'CSS', family: 'Web', logo: 'css', usedIn: ['Loomwest: every site built by hand'] },
       { n: 4, symbol: 'Js', name: 'JavaScript', family: 'Web', logo: 'javascript', usedIn: ['Loomwest: every site built by hand'] },
@@ -195,6 +195,7 @@ export const PATH: PathStop[] = [
   { date: 'Oct 12, 2026', kind: 'Studio', title: 'Five new example sites', place: 'loomwest.com/work.html', detail: 'Endocarb Materials, Purlin & Stone, Tafoni, Uvas Auto Works and Toyon Counseling: a battery-materials maker, a design-build studio, a trail store, an auto repair shop and a counseling practice, all fictional, each on its own address.' },
   { date: 'Oct 13, 2026', kind: 'Studio', title: 'Pantally, the first Signature build', place: 'loomwest.com/work.html', detail: "A fictional food-waste scanner maker built to Loomwest's premium Signature standard, with a sample scan you can run, a service clock and a heat-lamp cursor." },
   { date: 'Oct 23, 2026', kind: 'Launch', title: 'Dreamland Gardens', place: 'Claymont, Delaware · dreamlandgardens.com', detail: 'A homepage redesign for an online garden and outdoor store on Shopify.' },
+  { date: 'Nov 3, 2026', kind: 'Launch', title: 'Lujan & Lee Commercial Services', place: 'Concord · lujanlee.com', detail: "A yard maintenance company's new website: a lawn of leaves you rake to reveal the services, an estimate request the site writes for you, and the address on a map." },
 ];
 
 export const PATH_NEXT = {
@@ -269,7 +270,7 @@ export const PROJECTS: Project[] = [
     tech: SCOPE_CHIPS, url: 'https://fariacpas.com', domain: 'fariacpas.com', shot: '/work/fariacpas.webp',
   },
   // Dreamland Gardens (2026-10-28, live 2026-10-23): a homepage redesign on the store's own Shopify theme, not a site
-  // build, so it is not counted in "seven client sites" and EVERY_LAUNCH (review form, privacy page, map links, visit
+  // build, so it is not counted in the client site count and EVERY_LAUNCH (review form, privacy page, map links, visit
   // counting) does not apply; its features are its own, from resume-web.md and loomwest.com's Work page row #dreamland.
   {
     id: 'dreamland', index: '08', title: 'Dreamland Gardens', kicker: 'Claymont, Delaware',
@@ -279,7 +280,7 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-export const IN_REVIEW_NOTE = 'Two more in client review: Trilogy Adult Services and Lujan & Lee Commercial Services, Concord.';
+export const IN_REVIEW_NOTE = 'One more in client review: Trilogy Adult Services, Concord.';
 
 // ---------------------------------------------------------------- example sites (fictional businesses)
 // Andre 2026-10-07, about 4:35 PM: "we should also add our demo/mock sites to showcase our work and other styles too
@@ -422,7 +423,7 @@ export const CASE_STUDY = {
   ],
   stats: [
     { value: '59', label: 'Report Cards published' },
-    { value: '7', label: 'Launched client sites' },
+    { value: '8', label: 'Launched client sites' },
     { value: '19', label: 'Example sites' },
     { value: '7', label: 'Motion ads' },
   ],
@@ -481,7 +482,7 @@ export const LEARNING: LearningItem[] = [
       'Its vocabulary can be written as RDFa, Microdata or JSON-LD, and applications from Google, Microsoft, Pinterest, Yandex and others already use it.',
       'As of 2024, over 45 million web domains mark up their pages with Schema.org objects.',
     ],
-    loomwest: "loomwest.com and all seven client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
+    loomwest: "loomwest.com and all eight client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
     source: { label: 'schema.org', href: 'https://schema.org/' },
   },
   {
@@ -492,7 +493,7 @@ export const LEARNING: LearningItem[] = [
       'It does not track users with unique identifiers, and it identifies unique visits without cookies or persistently storing any personal data.',
       'It adds about 3.5 KB to a site and goes in with a single script tag.',
     ],
-    loomwest: 'Since October 6, 2026 it counts visits and button taps on loomwest.com, its Report Cards and all seven client sites, with no cookies.',
+    loomwest: 'Since October 6, 2026 it counts visits and button taps on loomwest.com, its Report Cards and all eight client sites, with no cookies.',
     source: { label: 'goatcounter.com', href: 'https://www.goatcounter.com/' },
   },
   {
@@ -503,7 +504,7 @@ export const LEARNING: LearningItem[] = [
       'It is designed with simplicity, performance and usability in mind, and works efficiently across all major desktop and mobile platforms.',
       'It handles tile layers, markers, popups and shapes, with drag panning, pinch-zoom on phones and keyboard navigation.',
     ],
-    loomwest: 'Six client sites and loomwest.com carry a Leaflet map with OpenStreetMap tiles, loaded only as it nears the screen, with a pin for a published address or a shaded service area.',
+    loomwest: 'Seven client sites and loomwest.com carry a Leaflet map with OpenStreetMap tiles, loaded only as it nears the screen, with a pin for a published address or a shaded service area.',
     source: { label: 'leafletjs.com', href: 'https://leafletjs.com/' },
   },
   {
@@ -539,7 +540,7 @@ export const NUMBERS_PULLED = 'Numbers pulled Sun, Nov 1, 2026, 6:35 AM PT. Upda
 // weekly numbers: pulled line end
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { value: 8, label: 'Sites live', caption: 'Seven for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
+  { value: 9, label: 'Sites live', caption: 'Eight for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
   // weekly numbers: cards begin
   { value: 6770, label: 'Site visits', caption: 'On loomwest.com and the seven client sites since Oct 6, 2026, counted without cookies.', detail: 'As of Sun, Nov 1, 2026', icon: 'visits' },
   { value: 1023, label: 'Button taps', caption: 'Taps on call, book, order and contact buttons across the same sites.', detail: 'As of Sun, Nov 1, 2026', icon: 'tap' },
@@ -547,7 +548,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { value: 8254, label: 'Instagram views', caption: 'Views of the @loomwest.design posts and Stories.', detail: 'As of Sun, Nov 1, 2026', icon: 'views' },
   { value: 50, label: 'Shares', caption: 'Times people sent our Instagram posts and Stories on to someone.', detail: 'As of Sun, Nov 1, 2026', icon: 'share' },
   // weekly numbers: cards end
-  { value: 2, label: 'In client review', caption: 'Trilogy Adult Services and Lujan & Lee Commercial Services.', detail: 'Concord', icon: 'review' },
+  { value: 1, label: 'In client review', caption: 'Trilogy Adult Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites quoted on a free call, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
   { value: 19, label: 'Example sites', caption: "Fictional businesses, each in its own style, on loomwest.com's Work page.", detail: 'The design range', icon: 'layers' },
   { value: 59, label: 'Report Cards', caption: 'Free reviews of how a business shows up online, each a private page.', detail: 'loomwest.com, since August 2026', icon: 'grade' },

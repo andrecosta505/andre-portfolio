@@ -82,7 +82,7 @@ export default function Experience() {
         <div className="xp-left">
           <SectionTag n={t.n} label={t.label} />
           <Heading id="xp-title" lines={['How Loomwest', 'got']} accent="here." />
-          <p className="lede rv">From a name in August 2026 to seven live client sites, one launch at a time, in the order it happened.</p>
+          <p className="lede rv">From a name in August 2026 to eight live client sites, one launch at a time, in the order it happened.</p>
         </div>
         <div ref={wrapRef} className="xp-wrap">
           <span className="xp-spine" aria-hidden="true" />
