@@ -544,17 +544,17 @@ export type Achievement = {
 // only when every check passes. Edit that script, not these lines. Numbers never go down: a missing or lower value keeps the last
 // shipped one (loomwest/finance/metrics/portfolio-numbers.json).
 // weekly numbers: pulled line begin
-export const NUMBERS_PULLED = 'Numbers pulled Sun, Nov 8, 2026, 6:35 AM PT. Updated every Sunday.';
+export const NUMBERS_PULLED = 'Numbers pulled Sun, Nov 15, 2026, 6:35 AM PT. Updated every Sunday.';
 // weekly numbers: pulled line end
 
 export const ACHIEVEMENTS: Achievement[] = [
   { value: 9, label: 'Sites live', caption: 'Eight for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
   // weekly numbers: cards begin
-  { value: 8564, label: 'Site visits', caption: 'On loomwest.com and the eight client sites since Oct 6, 2026, counted without cookies.', detail: 'As of Sun, Nov 8, 2026', icon: 'visits' },
-  { value: 1268, label: 'Button taps', caption: 'Taps on call, book, order and contact buttons across the same sites.', detail: 'As of Sun, Nov 8, 2026', icon: 'tap' },
-  { value: 13768, label: 'People reached', caption: "People who saw Loomwest's own ads on Facebook and Instagram.", detail: 'As of Sun, Nov 8, 2026', icon: 'reach' },
-  { value: 8809, label: 'Instagram views', caption: 'Views of the @loomwest.design posts and Stories.', detail: 'As of Sun, Nov 8, 2026', icon: 'views' },
-  { value: 50, label: 'Shares', caption: 'Times people sent our Instagram posts and Stories on to someone.', detail: 'As of Sun, Nov 8, 2026', icon: 'share' },
+  { value: 11123, label: 'Site visits', caption: 'On loomwest.com and the eight client sites since Oct 6, 2026, counted without cookies.', detail: 'As of Sun, Nov 15, 2026', icon: 'visits' },
+  { value: 1702, label: 'Button taps', caption: 'Taps on call, book, order and contact buttons across the same sites.', detail: 'As of Sun, Nov 15, 2026', icon: 'tap' },
+  { value: 14482, label: 'People reached', caption: "People who saw Loomwest's own ads on Facebook and Instagram.", detail: 'As of Sun, Nov 15, 2026', icon: 'reach' },
+  { value: 10351, label: 'Instagram views', caption: 'Views of the @loomwest.design posts and Stories.', detail: 'As of Sun, Nov 15, 2026', icon: 'views' },
+  { value: 51, label: 'Shares', caption: 'Times people sent our Instagram posts and Stories on to someone.', detail: 'As of Sun, Nov 15, 2026', icon: 'share' },
   // weekly numbers: cards end
   { value: 1, label: 'In client review', caption: 'Trilogy Adult Services.', detail: 'Concord', icon: 'review' },
   { value: 7, prefix: '3–', label: 'Days to live', caption: 'Websites quoted on a free call, live in three to seven days.', detail: 'Design, copy, build and launch', icon: 'clock' },
