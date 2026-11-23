@@ -476,6 +476,10 @@ async function open(browser, opts = {}) {
   await page.keyboard.press('Tab');
   const intoPanel = await page.evaluate(() => document.activeElement?.closest('[role="tabpanel"]')?.id);
   check('Tab from the tabs goes into the selected panel (the first client site)', intoPanel === 'wk-tabpanel-clients', String(intoPanel));
+  // 2026-11-22: let the client accordion settle first. Back on its tab the open panel re-grows over its .9 s flex-grow
+  // transition (measured: the second panel's left edge 147 -> 696 px in about 1 s), and a click aimed mid-transition
+  // can land on the next panel (it opened the fourth site, twice, on a busy machine).
+  await sleep(1200);
   await page.click('#wk-tabpanel-clients .wk-panel >> nth=2 >> .wk-spine');
   await sleep(1300);
   const c3 = await page.evaluate(() => [...document.querySelectorAll('#wk-tabpanel-clients .wk-panel')].map((p) => p.classList.contains('is-open')).indexOf(true));

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { EXAMPLES, EXAMPLES_NOTE, EXAMPLE_TAG, FILMS, IN_REVIEW_NOTE, MOTION_NOTE, PROJECTS, SECTION_TAGS, WORK_TABS, type Project } from '@/lib/data';
+import { CONTENT_VIEWS, EXAMPLES, EXAMPLES_NOTE, EXAMPLE_TAG, FILMS, IN_REVIEW_NOTE, MOTION_NOTE, PROJECTS, SECTION_TAGS, WORK_TABS, type Project } from '@/lib/data';
 import { ArrowUpRight, Plus } from '../ui/Icons';
 import { Heading, SectionTag } from '../ui/SectionHead';
 import { Style } from '../ui/Style';
@@ -113,6 +113,20 @@ const css = `
   .wk-tab-full,.wk-tab small{display:none}
   .wk-tab-short{display:inline}
 }
+/* Views, so far (2026-11-22): the content numbers above the films, from views_pull.py; 8 px corners (Rav's rule) */
+.mo-reach{margin:0 0 30px}
+.mo-reach-k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 12px}
+.mo-reach-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0}
+.mo-reach-card{background:#fff;border-radius:8px;box-shadow:inset 0 0 0 1px var(--line);padding:18px 18px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mo-reach-card dd{margin:0}
+.mo-reach-v{order:-1;font-size:clamp(26px,2.6vw,34px);font-weight:600;letter-spacing:-.03em;line-height:1.05;color:var(--ink)}
+.mo-reach-l{font-size:15px;font-weight:600;color:var(--ink)}
+.mo-reach-c{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.mo-reach-c a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.mo-reach-c a:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:2px}
+.mo-reach-as{font-size:13px;color:var(--mute);margin:12px 0 0;max-width:80ch}
+@media (max-width: 1099px){ .mo-reach-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width: 479px){ .mo-reach-grid{grid-template-columns:minmax(0,1fr)} }
 `;
 
 function Visual({ p }: { p: Project }) {
@@ -289,6 +303,27 @@ export default function Work() {
             {w.id === 'motion' ? (
               <>
                 <p className="wk-note">{MOTION_NOTE}</p>
+                <section className="mo-reach" aria-labelledby="mo-reach-h">
+                  <h3 className="mo-reach-k" id="mo-reach-h">{CONTENT_VIEWS.kicker}</h3>
+                  <dl className="mo-reach-grid">
+                    {CONTENT_VIEWS.cards.map((c) => (
+                      <div className="mo-reach-card" key={c.label}>
+                        <dt className="mo-reach-l">{c.label}</dt>
+                        <dd className="mo-reach-v">{c.value}</dd>
+                        <dd className="mo-reach-c">
+                          {c.caption}
+                          {c.href ? (
+                            <>
+                              {' '}
+                              <a href={c.href} target="_blank" rel="noopener noreferrer">Watch the Reel<span className="sr-only"> on Instagram (opens in a new tab)</span></a>
+                            </>
+                          ) : null}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="mo-reach-as">{CONTENT_VIEWS.asOf}</p>
+                </section>
                 <MotionGrid />
               </>
             ) : (

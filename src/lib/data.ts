@@ -361,6 +361,22 @@ export type Film = {
 };
 export const MOTION_NOTE =
   "Seven motion films made for Loomwest's own ads, designed, animated and scored in house, and the Reels posted on @loomwest.design. Silent previews here; the films play with sound on loomwest.com's Content Studio & Ads page, the Reels on Instagram.";
+// Views on the posts Loomwest made (Andre 2026-11-22, 10:49 PM: "update the portfolio ... for the content creation page and
+// information"). From loomwest/planning/portfolio-andre/views-<date>.json (views_pull.py): @loomwest.design through Instagram's
+// API (exact); client posts from each profile's public Reels tab, where Instagram rounds counts of 10,000 and up, so exact and
+// rounded are kept apart and the totals say "about". The same numbers are on loomwest.com/content.html#reach.
+// content views: begin
+export const CONTENT_VIEWS = {
+  kicker: 'Views, so far',
+  asOf: 'Numbers last updated Sun, Nov 22, 2026, 11:42 PM PT, from Instagram: @loomwest.design’s own numbers, and the public counts on client posts.',
+  cards: [
+    { value: 'About 78,400', label: 'Views on posts I made', caption: '99 posts and Reels for Loomwest and its clients: 18,658 counted exactly, plus about 59,700 from two counts Instagram rounds.' },
+    { value: '10,879', label: '@loomwest.design', caption: 'Views of the 94 posts and Reels on Loomwest’s own account, counted exactly by Instagram.' },
+    { value: 'About 67,500', label: 'Client Reels', caption: 'Five Reels I made or edited for clients, four of them for Pastelaria Adega: 7,779 exact, plus about 59,700 rounded.' },
+    { value: '1,367', label: 'Best Loomwest Reel yet', caption: '“Could someone in San Jose see a sign in Gilroy?” The first Loomwest Reel past 1,000 views, within five hours of posting.', href: 'https://www.instagram.com/reel/DgEXQwQzMWj/' },
+  ],
+};
+// content views: end
 const CONTENT = 'https://loomwest.com/content.html';
 const onContent = (anchor: string) => ({ label: "loomwest.com's Content Studio & Ads page", href: `${CONTENT}#${anchor}` });
 export const FILMS: Film[] = [
