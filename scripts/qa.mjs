@@ -8,7 +8,7 @@
 // drawer (open by click, Enter and tap; Tab stays inside; Esc, the backdrop and Close shut it; focus returns to the
 // row; the page locks and unlocks; the official links).
 // Round 4 (2026-10-07): the Work switch (tablist, aria-selected, roving tabindex, click, arrow keys, Home and End, a
-// visible focus ring, tap on a phone; each tab's own panels: 9 client panels (8 sites, Lujan & Lee since 2026-11-09, and, since 2026-10-28, the Dreamland Gardens homepage), 20 example sites each tagged "Example site,
+// visible focus ring, tap on a phone; each tab's own panels: 10 client panels (9 sites, Lujan & Lee since 2026-11-09, LaCoe Construction since 2026-11-26, and, since 2026-10-28, the Dreamland Gardens homepage), 20 example sites each tagged "Example site,
 // fictional business" with its style, a "View example" link and both screenshots answering 200; every panel opens),
 // the capstone PDF served from this site (200, application/pdf, %PDF), and the "Say hello" badge (a button that opens
 // its choices: the Email, Call, Text and Start a project links; focus moves in; Esc, a click or tap outside and Tab out
@@ -290,7 +290,7 @@ async function open(browser, opts = {}) {
     return { ids, tags, panels };
   });
   check('sections run Work, Always learning, the case study, Experience and the tags read 01 to 08', order.ids.join() === 'top,about,skills,work,learning,case-study,experience,achievements,contact' && order.tags.join() === '01,02,03,04,05,06,07,08', `${order.ids.join(' > ')} | ${order.tags.join(' ')}`);
-  check('the "Live client sites" tab holds the eight client sites and the Dreamland Gardens homepage only (no capstone, no examples)', order.panels.length === 9 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
+  check('the "Live client sites" tab holds the nine client sites and the Dreamland Gardens homepage only (no capstone, no examples)', order.panels.length === 10 && !order.panels.some((t) => /capstone|^The /i.test(t)), order.panels.join(' | '));
   // ---- round 5 (2026-10-07): web design only
   const web = await page.evaluate(async () => {
     const text = document.body.innerText;
@@ -323,7 +323,7 @@ async function open(browser, opts = {}) {
     return { imgs, st, stats: [...sec.querySelectorAll('.cs-stats b')].map((b) => b.textContent), feats: sec.querySelectorAll('.cs-feat li').length,
       cta: a ? [a.textContent.trim().slice(0, 18), a.href, a.target, a.rel] : null, title: sec.querySelector('h2')?.textContent };
   });
-  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 8 / 19 / 7, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|8|19|7' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
+  check('the loomwest.com case study: two colour screenshots (200), six features, 59 / 9 / 19 / 7, "Visit loomwest.com" in a new tab', cs.imgs.length === 2 && cs.st.every((x) => /^200 image\/webp/.test(x)) && cs.feats === 6 && cs.stats.join('|') === '59|9|19|7' && cs.cta && cs.cta[0] === 'Visit loomwest.com' && cs.cta[1] === 'https://loomwest.com/' && cs.cta[2] === '_blank' && /noopener/.test(cs.cta[3]), JSON.stringify(cs));
   // round 6: the hero moving in the case study's frames
   check('the first screen fetched nothing from the case study recordings', caseAtStart === 0, `${caseAtStart} requests at load`);
   const csv = () => page.evaluate(() => [...document.querySelectorAll('#case-study .cs-media')].map((m) => {
@@ -373,8 +373,8 @@ async function open(browser, opts = {}) {
     stops: [...document.querySelectorAll('#experience .xp-stop .xp-card')].map((c) => c.querySelector('.xp-year').childNodes[0].textContent.trim() + ' ' + c.querySelector('.xp-title').textContent),
     next: document.querySelector('#experience .xp-next h3')?.textContent,
   }));
-  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens', 'Oct 12, 2026 Five new example sites', 'Oct 13, 2026 Pantally, the first Signature build', 'Oct 23, 2026 Dreamland Gardens', 'Nov 3, 2026 Lujan & Lee Commercial Services'];
-  check('Experience is Loomwest\'s sixteen dated milestones (Dreamland Gardens since 2026-10-28; Oct 12 and 13 since 2026-10-30; Lujan & Lee since 2026-11-08), in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
+  const wantStops = ['Aug 18, 2026 Loomwest is named', 'Aug 22, 2026 loomwest.com goes live', 'Aug 23, 2026 The free Website Report Card', 'Aug 27, 2026 Nine Star Drywall', 'Aug 29, 2026 The Work page and the design range', 'Sep 4, 2026 South County Window Cleaning', 'Sep 10, 2026 Faria Accountancy Corporation', 'Sep 22, 2026 Soul Beauty Spa', 'Sep 25, 2026 Auburn Sewing Studio', 'Oct 2, 2026 Pastelaria Adega', 'Oct 5, 2026 Petiscos by Adega', 'Oct 5, 2026 The Content Studio opens', 'Oct 12, 2026 Five new example sites', 'Oct 13, 2026 Pantally, the first Signature build', 'Oct 23, 2026 Dreamland Gardens', 'Nov 3, 2026 Lujan & Lee Commercial Services', 'Nov 25, 2026 LaCoe Construction'];
+  check('Experience is Loomwest\'s seventeen dated milestones (Dreamland Gardens since 2026-10-28; Oct 12 and 13 since 2026-10-30; Lujan & Lee since 2026-11-08; LaCoe Construction since 2026-11-26), in order, ending on "Next: your business?"', JSON.stringify(xp.stops) === JSON.stringify(wantStops) && xp.next === 'Next: your business?', xp.stops.join(' | '));
   // 2026-10-30 (Andre's OK): no price wording; every build is quoted on a call
   const words = await page.evaluate(() => ({ text: document.body.innerText, desc: document.querySelector('meta[name="description"]')?.content || '' }));
   const priced = ['fixed price', 'at fixed prices', '$'].filter((w) => words.text.toLowerCase().includes(w) || words.desc.toLowerCase().includes(w));
@@ -437,7 +437,7 @@ async function open(browser, opts = {}) {
     for (const s of srcs) { const r = await fetch(s, { cache: 'no-store' }); if (r.status !== 200 || !/webp/.test(r.headers.get('content-type') || '')) bad.push(`${s} ${r.status}`); }
     return { n: srcs.length, bad };
   });
-  check('every Work screenshot answers 200 (9 client and 20 example sites, desktop and phone)', shots.n === 58 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
+  check('every Work screenshot answers 200 (10 client and 20 example sites, desktop and phone)', shots.n === 60 && shots.bad.length === 0, `${shots.n} images${shots.bad.length ? ', bad: ' + shots.bad.join(', ') : ''}`);
   const opened = [];
   for (let i = 0; i < 19; i++) {
     // stacked, a click on an open panel folds it, and the first starts open: click only the closed ones

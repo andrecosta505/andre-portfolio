@@ -83,7 +83,7 @@ export const SECTION_TAGS = {
 export const QUICK_FACTS: { label: string; value: string; href?: string }[] = [
   { label: 'Location', value: 'Gilroy, California' },
   { label: 'Now', value: 'Founder and designer, Loomwest' },
-  { label: 'Work', value: 'Eight client sites live, one more in client review' },
+  { label: 'Work', value: 'Nine client sites live, one more in client review' },
   { label: 'Turnaround', value: 'Live in three to seven days, quoted on a free call' },
   { label: 'Email', value: 'andre@loomwest.com', href: 'mailto:andre@loomwest.com' },
   { label: 'Phone', value: '(669) 500-6385', href: 'tel:+16695006385' },
@@ -99,7 +99,7 @@ export const ID_CARD = {
   strap: 'ANDRE COSTA · FOUNDER AND DESIGNER · LOOMWEST · ',
   back: [
     'Founder and designer, Loomwest',
-    'Nine sites live, one more in client review',
+    'Ten sites live, one more in client review',
     'Twenty example sites, twenty styles',
     '59 Website Report Cards published',
     'Live in three to seven days',
@@ -128,7 +128,7 @@ export const SKILL_GROUPS: { family: SkillFamily; skills: Skill[] }[] = [
   {
     family: 'Web',
     skills: [
-      { n: 1, symbol: 'Wd', name: 'Web design', family: 'Web', logo: 'webdesign', usedIn: ['Loomwest', 'Eight live client sites'] },
+      { n: 1, symbol: 'Wd', name: 'Web design', family: 'Web', logo: 'webdesign', usedIn: ['Loomwest', 'Nine live client sites'] },
       { n: 2, symbol: 'Ht', name: 'HTML', family: 'Web', logo: 'html', usedIn: ['Loomwest: every site built by hand'] },
       { n: 3, symbol: 'Cs', name: 'CSS', family: 'Web', logo: 'css', usedIn: ['Loomwest: every site built by hand'] },
       { n: 4, symbol: 'Js', name: 'JavaScript', family: 'Web', logo: 'javascript', usedIn: ['Loomwest: every site built by hand'] },
@@ -196,6 +196,7 @@ export const PATH: PathStop[] = [
   { date: 'Oct 13, 2026', kind: 'Studio', title: 'Pantally, the first Signature build', place: 'loomwest.com/work.html', detail: "A fictional food-waste scanner maker built to Loomwest's premium Signature standard, with a sample scan you can run, a service clock and a heat-lamp cursor." },
   { date: 'Oct 23, 2026', kind: 'Launch', title: 'Dreamland Gardens', place: 'Claymont, Delaware · dreamlandgardens.com', detail: 'A homepage redesign for an online garden and outdoor store on Shopify.' },
   { date: 'Nov 3, 2026', kind: 'Launch', title: 'Lujan & Lee Commercial Services', place: 'Concord · lujanlee.com', detail: "A yard maintenance company's new website: a lawn of leaves you rake to reveal the services, an estimate request the site writes for you, and the address on a map." },
+  { date: 'Nov 25, 2026', kind: 'Launch', title: 'LaCoe Construction', place: 'South Bay Area · lacoeconstruction.com', detail: "A residential remodeler's first website: its own finished rooms turning in a slideshow inside the square from its logo, and a project form sent straight to its inbox." },
 ];
 
 export const PATH_NEXT = {
@@ -277,11 +278,20 @@ export const PROJECTS: Project[] = [
     features: ['Rake the leaves to see the services', 'An estimate request the site writes for you', 'The address on a map', ...EVERY_LAUNCH],
     tech: SCOPE_CHIPS, url: 'https://lujanlee.com', domain: 'lujanlee.com', shot: '/work/lujanlee.webp', captured: '9 Nov 2026',
   },
+  // LaCoe Construction (2026-11-26, live on lacoeconstruction.com since 2026-11-25): worded from resume-web.md's Selected
+  // work line and loomwest.com's Work page row #lacoe and case study. The site counts no visits (its privacy page says
+  // so), so EVERY_LAUNCH's last item (visit counting) is left off; the other three hold.
+  {
+    id: 'lacoe', index: '09', title: 'LaCoe Construction', kicker: 'South Bay Area',
+    description: "Residential remodeling, the company's first website: black and white, its own photos of eight finished rooms in a slideshow inside the square from its logo, a project form sent straight to its inbox.",
+    features: ["The company's first website", 'Its own finished rooms in the slideshow', 'A project form sent straight to its inbox', ...EVERY_LAUNCH.slice(0, 3)],
+    tech: SCOPE_CHIPS, url: 'https://lacoeconstruction.com', domain: 'lacoeconstruction.com', shot: '/work/lacoeconstruction.webp', captured: '26 Nov 2026',
+  },
   // Dreamland Gardens (2026-10-28, live 2026-10-23): a homepage redesign on the store's own Shopify theme, not a site
   // build, so it is not counted in the client site count and EVERY_LAUNCH (review form, privacy page, map links, visit
   // counting) does not apply; its features are its own, from resume-web.md and loomwest.com's Work page row #dreamland.
   {
-    id: 'dreamland', index: '09', title: 'Dreamland Gardens', kicker: 'Claymont, Delaware',
+    id: 'dreamland', index: '10', title: 'Dreamland Gardens', kicker: 'Claymont, Delaware',
     description: 'Homepage redesign for an online garden and outdoor store on Shopify; the rest of the store is the owner\'s own.',
     features: ['Previewed on a copy of the theme', 'Live-text banner', 'Shop-by-category tiles', 'Five product rows that swipe on a phone'],
     tech: SCOPE_CHIPS, url: 'https://dreamlandgardens.com', domain: 'dreamlandgardens.com', shot: '/work/dreamlandgardens.webp', captured: '28 Oct 2026',
@@ -447,7 +457,7 @@ export const CASE_STUDY = {
   ],
   stats: [
     { value: '59', label: 'Report Cards published' },
-    { value: '8', label: 'Launched client sites' },
+    { value: '9', label: 'Launched client sites' },
     { value: '19', label: 'Example sites' },
     { value: '7', label: 'Motion ads' },
   ],
@@ -506,7 +516,7 @@ export const LEARNING: LearningItem[] = [
       'Its vocabulary can be written as RDFa, Microdata or JSON-LD, and applications from Google, Microsoft, Pinterest, Yandex and others already use it.',
       'As of 2024, over 45 million web domains mark up their pages with Schema.org objects.',
     ],
-    loomwest: "loomwest.com and all eight client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
+    loomwest: "loomwest.com and all nine client sites describe the business in JSON-LD (name, phone, hours and address), and the free Report Card's first check looks for it.",
     source: { label: 'schema.org', href: 'https://schema.org/' },
   },
   {
@@ -517,7 +527,7 @@ export const LEARNING: LearningItem[] = [
       'It does not track users with unique identifiers, and it identifies unique visits without cookies or persistently storing any personal data.',
       'It adds about 3.5 KB to a site and goes in with a single script tag.',
     ],
-    loomwest: 'Since October 6, 2026 it counts visits and button taps on loomwest.com, its Report Cards and all eight client sites, with no cookies.',
+    loomwest: 'Since October 6, 2026 it counts visits and button taps on loomwest.com, its Report Cards and eight client sites, with no cookies.',
     source: { label: 'goatcounter.com', href: 'https://www.goatcounter.com/' },
   },
   {
@@ -564,7 +574,7 @@ export const NUMBERS_PULLED = 'Numbers pulled Sun, Nov 22, 2026, 6:36 AM PT. Upd
 // weekly numbers: pulled line end
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { value: 9, label: 'Sites live', caption: 'Eight for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
+  { value: 10, label: 'Sites live', caption: 'Nine for clients plus loomwest.com.', detail: 'Loomwest, 2026 to present', icon: 'browser' },
   // weekly numbers: cards begin
   { value: 12922, label: 'Site visits', caption: 'On loomwest.com and the eight client sites since Oct 6, 2026, counted without cookies.', detail: 'As of Sun, Nov 22, 2026', icon: 'visits' },
   { value: 2013, label: 'Button taps', caption: 'Taps on call, book, order and contact buttons across the same sites.', detail: 'As of Sun, Nov 22, 2026', icon: 'tap' },

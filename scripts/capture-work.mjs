@@ -21,6 +21,8 @@ const CLIENTS = [
   // Lujan & Lee (launched 2026-11-03): the first screen like every client site. Its crew are Trilogy Adult Services
   // participants; Andre 2026-11-09 about 11:50 AM: "its okay to show their workers" in the Work films and shots
   ['lujanlee', 'https://lujanlee.com/'],
+  // LaCoe Construction (launched 2026-11-25): the first screen like every client site, the slideshow on its first photo
+  ['lacoeconstruction', 'https://lacoeconstruction.com/'],
   // Dreamland Gardens (2026-10-28): Loomwest's homepage redesign on the store's own Shopify theme, live 2026-10-23. The
   // ready check takes the store's announcement bar out first (its own promotion, not Loomwest's work, and on 10/28 still
   // saying a sale "Ends October 26"; loomwest.com's tour hides it the same way), then shoots once at least 6 s have passed
